@@ -1,9 +1,8 @@
-module main;
+module spriteviewer;
 
 import dsfml.system.all;
 import dsfml.window.all;
 import dsfml.graphics.all;
-//import dsfml.audio.all;
 
 import openbb.common;
 import openbb.io.palette;
