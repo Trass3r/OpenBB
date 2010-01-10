@@ -1,7 +1,7 @@
 /**
  *	
  */
-module BOXFile;
+module openbb.io.boxfile;
 
 import std.stream, std.file;
 import std.string;
@@ -97,7 +97,7 @@ public:
 
 				ubyte[] buffer = new ubyte[curEntry.size];
 				_hIn.readExact(buffer.ptr, buffer.length);
-				_entryData ~= buffer;
+				_entryData ~= buffer; // this actually isn't that inefficient cause only references are copied
 				
 				++i;
 			}

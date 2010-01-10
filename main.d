@@ -5,11 +5,11 @@ import dsfml.window.all;
 import dsfml.graphics.all;
 //import dsfml.audio.all;
 
-import common;
-import Palette;
-import BOXFile;
-import MFBFile;
-import theapp;
+import openbb.common;
+import openbb.io.palette;
+import openbb.io.boxfile;
+import openbb.io.mfbfile;
+import openbb.theapp;
 import std.stdio;
 import std.string;
 
@@ -25,7 +25,6 @@ void main()
     
     auto videobox = new BOXFile("VIDEO.BOX");
     
-    writeln(videobox.fileList);
 	auto mfb = new MFBFile(videobox[videobox.fileList[2]]);
 	theApp = new TheApp;
 	updatePalette();

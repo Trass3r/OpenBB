@@ -1,9 +1,10 @@
-module Palette;
+module openbb.io.palette;
+
 import std.stream;
 import std.stdio;
 
-import common;
-import theapp;
+import openbb.common;
+import openbb.theapp;
 
 RGBA[] palette;
 

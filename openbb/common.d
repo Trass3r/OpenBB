@@ -1,7 +1,8 @@
-module common;
+module openbb.common;
+
 import std.string;
 
-import theapp;
+import openbb.theapp;
 
 ///
 struct RGBA

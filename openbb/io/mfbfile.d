@@ -1,11 +1,11 @@
-module MFBFile;
+module openbb.io.mfbfile;
 
 import std.stream;
 import std.string;
 import std.stdio;
 
-import common;
-import Palette;
+import openbb.common;
+import openbb.io.palette;
 
 const FLAG_COMPRESSED = 0x2;
 const FLAG_1 = 0x1;
