@@ -1,9 +1,28 @@
 module openbb.log;
 
-import std.stdarg;
+import std.stdio;
 
-void log(vec2f position, ...)
+
+/// logging function
+void log(T...)(T t)
 {
-	glColor3f(1.0f,1.0f,1.0f);
-//	glRasterPos
+	write(t);
+}
+
+/// ditto
+void logln(T...)(T t)
+{
+	writeln(t);
+}
+
+/// logging function, formatted version
+void logf(T...)(T t)
+{
+	writef(t);
+}
+
+/// logging function
+void logfln(T...)(T t)
+{
+	writefln(t);
 }

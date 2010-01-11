@@ -3,6 +3,8 @@
  */
 module openbb.tile;
 
+import dsfml.graphics.sprite;
+
 
 enum TileFlags
 {
@@ -15,6 +17,7 @@ enum TileFlags
 struct Tile
 {
 align(1):
+	Sprite	sprite;
 	ushort	resID; /// resource ID
 	ushort	flags;
 }

@@ -3,6 +3,8 @@
  */
 module openbb.io.boxfile;
 
+import openbb.common;
+
 import std.stream, std.file;
 import std.string;
 import std.stdio;
@@ -91,7 +93,7 @@ public:
 				_hIn.readExact(&curEntry, Entry.sizeof);
 				_entryHeaders ~= curEntry;
 
-				_filenameTable[fromStringz(cast(char*) curEntry.filename)] = i; // filename -> index hash table
+				_filenameTable[fromStringz(cast(ichar*) curEntry.filename)] = i; // filename -> index hash table
 				
 				//debug writeln(curEntry);
 
@@ -193,6 +195,30 @@ public:
 		finally
 		{
 			_hIn.close();
+		}
+	}
+	
+	/// sort the file list by filename
+	void sort()
+	{
+	}
+	/// get the filename of entry number idx
+	string entryName(uint idx)
+	in
+	{
+		assert(idx >= 0 && idx < _entryHeaders.length);
+	}
+	body
+	{
+		return fromStringz(cast(ichar*) _entryHeaders[idx].filename);
+	}
+	
+	@property	
+	{
+		/// number of files in the archive
+		uint numFiles()
+		{
+			return _entryHeaders.length;
 		}
 	}
 }

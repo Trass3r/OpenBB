@@ -35,6 +35,7 @@ private:
 	Header _header;
 	string _filename;
 	ubyte[][] _spriteData;
+	ubyte _transparencyColor; // the color used for transparency TODO: do this better
 
 	void checkHeader()
 	{
@@ -62,6 +63,7 @@ public:
 		{
 			if((_header.flags & FLAG_COMPRESSED) == 0) // not compressed
 			{
+				_transparencyColor = data[pos];
 				foreach(j; 0 .. _header.width * _header.height)
 					_spriteData[i][j] = data[pos + j];
 				// _spriteData[i] = data[pos .. pos + _header.width*_header.height].dup;
@@ -71,6 +73,7 @@ public:
 			else // RLE compressed
 			{
 				uint size = *cast(uint*) (data.ptr + pos); pos += 4;
+				_transparencyColor = data[pos];
 				unRLE(data[pos .. pos + size], _spriteData[i]);
 				pos += size;
 			}
@@ -85,21 +88,24 @@ public:
 	//	void height(ushort rhs)	{_header.height=rhs;} /// ditto
 		ushort numSprites()			{return _header.numSprites;} /// getter
 	//	void numSprites(ushort rhs)	{_header.numS
+		ushort flags()			{return _header.flags;} /// flags getter
 	}
 	
 	/// returns sprite at index i as RGBA data
-	RGBA[] opIndex(size_t index)
+	RGBA[] opIndex(size_t index, ubyte paletteIdx = 0)
 	in
 	{
 		assert(index>=0 && index<_header.numSprites);
 	}
 	body
 	{
+		usePalette(paletteIdx);
 		RGBA[] buffer;
 		buffer.length = _header.width*_header.height;
 		for(uint i=0; i<buffer.length; i++)
 		{
-			buffer[i] = palette[_spriteData[index][i]];
+//			buffer[i] = palette[_spriteData[index][i]];
+			buffer[i] = _spriteData[index][i] == _transparencyColor ? RGBA(0,0,0,0) : palette[_spriteData[index][i]];
 		}
 		return buffer;
 	}
