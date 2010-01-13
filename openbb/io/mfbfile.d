@@ -1,5 +1,6 @@
 module openbb.io.mfbfile;
 
+import core.stdc.math;
 import std.stream;
 import std.string;
 import std.stdio;
@@ -110,6 +111,42 @@ public:
 		return buffer;
 	}
 
+	/// return all sprites in a single image
+	RGBA[] opSlice()
+	{
+		return opSlice(0, _header.numSprites);
+	}
+	
+	/// return sprites s .. e in a single image
+	RGBA[] opSlice(size_t s, size_t e)
+	{
+		usePalette(0);
+		auto buffer = new RGBA[_header.width*_header.height * _header.numSprites];
+		
+//		uint width	= cast(uint) sqrtf(cast(float) _header.numImages);
+//		uint height	= cast(uint) (((cast(float) _header.numImages) / height) + 0.5f);
+		uint height = 1;
+		uint width = _header.numSprites;
+		
+		uint bufIndex = 0;
+		for(uint y=0; y<_header.height; y++)
+		{
+			for(uint j=0; j<height; j++)
+			{
+				for(uint i=0; i<width; i++)
+				{
+					for(uint x=0; x<_header.width; x++)
+					{
+						buffer[bufIndex++] = palette[_spriteData[j*width+i][y*_header.width+x]];
+					}
+				}
+					
+			}
+		}
+		
+		return buffer;
+	}
+	
 	/// read an MFB file
 	void readMFB()
 	{
