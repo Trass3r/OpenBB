@@ -10,6 +10,7 @@ import dsfml.audio.all;
 import dsfml.network.all;
 
 import openbb.common;
+import openbb.graphics.animation;
 import openbb.io.palette;
 import openbb.io.boxfile;
 import openbb.io.mfbfile;
@@ -53,9 +54,13 @@ void main()
 	}
 
 	auto mfb2 = new MFBFile(videobox["woman.MFB"]);
-	auto testSpriteSheetImage = new Image(mfb2.numSprites * mfb2.width, mfb2.height, cast(ubyte[]) mfb2[]);
-	auto testSpriteSheetSprite = new Sprite(testSpriteSheetImage);
-	testSpriteSheetSprite.setPosition(10.f, 15.f);
+	Image testSpriteSheetImage = new Image(mfb2.numSprites * mfb2.width, mfb2.height, cast(ubyte[]) mfb2[]);
+	auto animation = new Animation(testSpriteSheetImage, mfb2.width, mfb2.height);
+	animation.setPosition(100.f, 50.f);
+	animation.loopSpeed = 10;
+	animation.play();
+	Sprite testSpriteSheetSprite = new Sprite(testSpriteSheetImage);
+	testSpriteSheetSprite.setPosition(100.f, 150.f);
 	
 	auto map = new StaggeredMap(30, 60, window, images);
 
@@ -145,7 +150,9 @@ void main()
 		framerate = 1.f / window.getFrameTime();
 		fps.setString(std.string.format("%f fps", framerate));
 		window.draw(fps);
-		window.draw(testSpriteSheetSprite);
+//		window.draw(testSpriteSheetSprite);
+		window.draw(animation);
+		animation.update();
 		window.display();
 	}
 }

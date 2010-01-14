@@ -31,6 +31,7 @@ private:
 	uint	_sheetHeight; /// number of frames in a column
 
 public:
+	// TODO: default constructor necessary?
 	this()
 	{
 		
@@ -39,8 +40,13 @@ public:
 	{
 		super(image);
 		
-		_sheetWidth	= image.getWidth() / _frameWidth;
-		_sheetHeight= image.getHeight() / _frameHeight;
+		_clock = new Clock;
+
+		_frameWidth	= frameWidth;
+		_frameHeight= frameHeight;
+		
+		_sheetWidth	= image.getWidth() / frameWidth;
+		_sheetHeight= image.getHeight() / frameHeight;
 	}
 	
 	~this()
@@ -66,7 +72,7 @@ public:
 	protected IntRect getFrameRect(uint frame)
 	{
 		uint y = frame / _sheetWidth;
-		uint x = frame % _sheetHeight;
+		uint x = frame % _sheetWidth;
 		
 		return IntRect(	x * _frameWidth,
 						y * _frameHeight,
@@ -74,8 +80,11 @@ public:
 					(y+1) * _frameHeight);
 	}
 	
-	Animation play(uint startFrame, uint endFrame)
+	Animation play(uint startFrame = 0, uint endFrame = 0)
 	{
+		if(endFrame <= startFrame)
+			endFrame = numFrames;
+		
 		_loopStart	= startFrame;
 		_loopEnd	= endFrame;
 		_curFrame	= startFrame;
@@ -107,9 +116,9 @@ public:
 		{
 			uint frameCount		= _loopEnd - _loopStart;
 			float timePosition	= _clock.getElapsedTime() * _fps;
-			_curFrame = _loopStart + (cast(uint)timePosition) % frameCount; // TODO: or should it be cast(uint)(timePosition % frameCount) 
+			_curFrame = _loopStart + (cast(uint)timePosition) % frameCount; // correct that way 
 			
-			debug logfln("%f:%d",_clock.getElapsedTime(),_curFrame);
+			debug logfln("%f:%d\t%d",_clock.getElapsedTime(), _curFrame);
  
 			setSubRect(getFrameRect(_curFrame));
 		}
