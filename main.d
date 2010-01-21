@@ -21,7 +21,7 @@ import std.string;
 
 void main()
 {
-	RenderWindow window = new RenderWindow(VideoMode(1024, 768), "OpenBB");//, Style.Fullscreen);
+	RenderWindow window = new RenderWindow(VideoMode(1024, 768), "OpenBB", Style.Default, ContextSettings(24,8,0,3,1));
 //	window.setFramerateLimit(60);
 
 	// testing lua
@@ -62,12 +62,15 @@ void main()
 	Sprite testSpriteSheetSprite = new Sprite(testSpriteSheetImage);
 	testSpriteSheetSprite.setPosition(100.f, 150.f);
 	
-	auto map = new StaggeredMap(30, 60, window, images);
+	auto map = new StaggeredMap(25, 70, window, images);
 
 	float framerate;
-	Text fps = new Text(std.string.format("%f fps", framerate));
-	fps.setPosition(50.f, 50.f);
-	
+	Text fps = new Text(""c);
+	fps.setCharacterSize(30);
+	fps.move(50.f, 25.f);
+	fps.setColor(Color.BLACK);
+	uint iFps = 0;
+	Clock fpsClock = new Clock();
 	while (window.isOpened())
 	{
 		Event evt;
@@ -76,37 +79,6 @@ void main()
 		{
 			switch(evt.Type)
 			{
-				case EventType.KeyPressed:
-					switch(evt.Key.Code)
-					{
-						case KeyCode.Return:
-							if (bound != FloatRect())
-								window.setView(new View(bound));
-							s = null;
-							break;
-						case KeyCode.Escape:
-							window.setView(window.getDefaultView());   
-							break;
-						case KeyCode.Left:
-							View view = window.getView().move(-1000 * window.getFrameTime(), 0);
-							window.setView(view);
-							break;
-						case KeyCode.Right:
-							View view = window.getView().move(1000 * window.getFrameTime(), 0);
-							window.setView(view);
-							break;
-						case KeyCode.Up:
-							View view = window.getView().move(0, -1000 * window.getFrameTime());
-							window.setView(view);
-							break;
-						case KeyCode.Down:
-							View view = window.getView().move(0, 1000 * window.getFrameTime());
-							window.setView(view);
-							break;
-						
-						default:
-					}
-					break;
 				case EventType.MouseButtonPressed:
 					if (evt.MouseButton.Button == MouseButtons.Left)
 					{
@@ -138,6 +110,37 @@ void main()
 				window.close();
 		}
 
+		if(input.isKeyDown(KeyCode.Return))
+		{
+			if (bound != FloatRect())
+				window.setView(new View(bound));
+			s = null;
+		}
+		if(input.isKeyDown(KeyCode.Escape))
+		{
+			window.setView(window.getDefaultView());
+		}
+		if(input.isKeyDown(KeyCode.Left))
+		{
+			View view = window.getView().move(-1000 * window.getFrameTime(), 0);
+			window.setView(view);
+		}
+		if(input.isKeyDown(KeyCode.Right))
+		{
+			View view = window.getView().move(1000 * window.getFrameTime(), 0);
+			window.setView(view);
+		}
+		if(input.isKeyDown(KeyCode.Up))
+		{
+			View view = window.getView().move(0, -1000 * window.getFrameTime());
+			window.setView(view);
+		}
+		if(input.isKeyDown(KeyCode.Down))
+		{
+			View view = window.getView().move(0, 1000 * window.getFrameTime());
+			window.setView(view);
+		}
+			
 		auto vec = window.convertCoords(input.getMouseX(), input.getMouseY());
 		
 		window.clear(Color.WHITE);
@@ -147,12 +150,19 @@ void main()
 		window.draw(tileMarker);
 		if (s !is null) window.draw(s);
 
-		framerate = 1.f / window.getFrameTime();
-		fps.setString(std.string.format("%f fps", framerate));
-		window.draw(fps);
 //		window.draw(testSpriteSheetSprite);
 		window.draw(animation);
 		animation.update();
+		
+		if(fpsClock.getElapsedTime() > 1.f)
+		{
+			fps.setString(std.string.format("%d fps", iFps));
+			iFps = 0;
+			fpsClock.reset();
+		}
+		++iFps;
+		window.draw(fps);
+
 		window.display();
 	}
 }
