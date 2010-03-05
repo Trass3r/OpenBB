@@ -160,9 +160,9 @@ public:
 			debug writefln("BOX byte: %d", _header.uk1);
 
 			Entry curEntry;
-			if(exists(_filename[0..length-4])==0)
-				mkdir(_filename[0..length-4]);
-			chdir(_filename[0..length-4]);
+			if(exists(_filename[0..$-4])==0)
+				mkdir(_filename[0..$-4]);
+			chdir(_filename[0..$-4]);
 			auto hOut = new std.stream.File;
 			debug writeln("entering while");
 			while(!_hIn.eof)

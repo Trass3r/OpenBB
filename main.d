@@ -11,17 +11,20 @@ import dsfml.network.all;
 
 import openbb.common;
 import openbb.graphics.animation;
+import openbb.graphics.gui;
 import openbb.io.palette;
 import openbb.io.boxfile;
 import openbb.io.mfbfile;
 import openbb.map;
 //import openbb.lua;
+import std.perf;
+import openbb.quadtree;
 import std.stdio;
 import std.string;
 
 void main()
 {
-	RenderWindow window = new RenderWindow(VideoMode(1024, 768), "OpenBB", Style.Default, ContextSettings(24,8,0,3,1));
+	RenderWindow window = new RenderWindow(VideoMode(1024, 768), "OpenBB", Style.Default, ContextSettings(24,8,0,2,0));
 //	window.setFramerateLimit(60);
 
 	// testing lua
@@ -54,7 +57,8 @@ void main()
 	}
 
 	auto mfb2 = new MFBFile(videobox["woman.MFB"]);
-	Image testSpriteSheetImage = new Image(mfb2.numSprites * mfb2.width, mfb2.height, cast(ubyte[]) mfb2[]);
+	auto sheet = cast(ubyte[]) mfb2[];
+	Image testSpriteSheetImage = new Image(mfb2.spriteSheetWidth, mfb2.spriteSheetHeight, sheet);
 	auto animation = new Animation(testSpriteSheetImage, mfb2.width, mfb2.height);
 	animation.setPosition(100.f, 50.f);
 	animation.loopSpeed = 10;
@@ -64,13 +68,25 @@ void main()
 	
 	auto map = new StaggeredMap(25, 70, window, images);
 
+	// position display
+	Text viewPos = new Text(""c);
+	viewPos.setCharacterSize(24);
+	viewPos.setPosition(100.f, 200.f);
+	viewPos.setColor(Color.BLACK);
+	
+	Text worldPos = new Text(""c);
+	worldPos.setCharacterSize(24);
+	worldPos.setPosition(100.f, 220.f);
+	worldPos.setColor(Color.BLACK);
+
+	// fps stuff
 	float framerate;
 	Text fps = new Text(""c);
 	fps.setCharacterSize(30);
 	fps.move(50.f, 25.f);
 	fps.setColor(Color.BLACK);
 	uint iFps = 0;
-	Clock fpsClock = new Clock();
+	auto fpsClock = new PerformanceCounter();
 	while (window.isOpened())
 	{
 		Event evt;
@@ -140,8 +156,10 @@ void main()
 			View view = window.getView().move(0, 1000 * window.getFrameTime());
 			window.setView(view);
 		}
-			
+
 		auto vec = window.convertCoords(input.getMouseX(), input.getMouseY());
+		viewPos.setString(std.string.format("Window coordinates: (%d %d)", input.getMouseX(), input.getMouseY()));
+		worldPos.setString(std.string.format("World coordinates: (%f %f)", vec.x, vec.y));
 		
 		window.clear(Color.WHITE);
 		map.render();
@@ -154,15 +172,19 @@ void main()
 		window.draw(animation);
 		animation.update();
 		
-		if(fpsClock.getElapsedTime() > 1.f)
+		fpsClock.stop();
+		if(fpsClock.seconds >= 1)
 		{
 			fps.setString(std.string.format("%d fps", iFps));
 			iFps = 0;
-			fpsClock.reset();
+			fpsClock.start();
 		}
 		++iFps;
 		window.draw(fps);
 
+		window.draw(viewPos);
+		window.draw(worldPos);
+		
 		window.display();
 	}
 }

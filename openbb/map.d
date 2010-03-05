@@ -14,6 +14,17 @@ import dsfml.system.vector2;
 
 import std.random;
 
+// walking directions on the map
+const North		= Vector2f(0.0f, -1.0f);
+const NorthEast	= Vector2f(1.0f, -0.5f); // sin(30°)
+const East		= Vector2f(1.0f, 0.0f);
+const SouthEast	= Vector2f(1.0f, 0.5f);
+const South		= Vector2f(0.0f, 1.0f);
+const SouthWest	= Vector2f(-1.0f, 0.5f);
+const West		= Vector2f(-1.0f, 0.0f);
+const NorthWest	= Vector2f(-1.0f, -0.5f);
+
+
 alias Vector2!(ushort) Vector2us;
 
 ///
@@ -78,12 +89,10 @@ class StaggeredMap : Map
 	/// render the map
 	override void render()
 	{
-		for(uint y=0; y<_mapheight; y++)
+		// the following is 28 microseconds faster than the width-height double loop version :D
+		for(uint i=0; i<_tiles.length; i++)
 		{
-			for(uint x=0; x<_mapwidth; x++)
-			{
-				_tiles[y*_mapwidth+x].sprite.render(_rendertarget);
-			}
+			_tiles[i].sprite.render(_rendertarget);
 		}
 	}
 	
@@ -91,7 +100,7 @@ class StaggeredMap : Map
 	override Vector2i convertMapToGlobal(Vector2i coords)
 	{
 		return Vector2i(coords.x * _tilewidth + (coords.y%2 == 1 ? _tilewidth/2: 0), // each 2nd row is shifted half the tile width
-						coords.y * (_tileheight / 2-1)); // new row starts after 1/2 the tile height
+						coords.y * (_tileheight/2 - 1)); // new row starts after 1/2 the tile height
 	}
 	
 	/// 

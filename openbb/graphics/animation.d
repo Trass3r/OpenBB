@@ -3,8 +3,10 @@
  */
 module openbb.graphics.animation;
 
+import std.perf;
+
 import openbb.log;
-import dsfml.system.clock;
+
 import dsfml.system.vector2;
 import dsfml.graphics.image;
 import dsfml.graphics.rect;
@@ -19,7 +21,7 @@ import dsfml.graphics.sprite;
 class Animation : Sprite
 {
 private:
-	Clock	_clock;
+	PerformanceCounter _clock;
 	float	_fps		= 1;
 	bool	_isPlaying	= false;
 	uint	_loopStart;
@@ -31,16 +33,12 @@ private:
 	uint	_sheetHeight; /// number of frames in a column
 
 public:
-	// TODO: default constructor necessary?
-	this()
-	{
-		
-	}
+
 	this(Image image, uint frameWidth, uint frameHeight)
 	{
 		super(image);
 		
-		_clock = new Clock;
+		_clock = new PerformanceCounter;
 
 		_frameWidth	= frameWidth;
 		_frameHeight= frameHeight;
@@ -80,7 +78,13 @@ public:
 					(y+1) * _frameHeight);
 	}
 	
+	/// play frames [startFrame, endFrame)
 	Animation play(uint startFrame = 0, uint endFrame = 0)
+	in
+	{
+		assert(startFrame >= 0 && endFrame < numFrames);
+	}
+	body
 	{
 		if(endFrame <= startFrame)
 			endFrame = numFrames;
@@ -90,7 +94,7 @@ public:
 		_curFrame	= startFrame;
 		_isPlaying	= true;
 		
-		_clock.reset();
+		_clock.start();
 		
 		return this;
 	}
@@ -115,10 +119,11 @@ public:
 		if(_isPlaying)
 		{
 			uint frameCount		= _loopEnd - _loopStart;
-			float timePosition	= _clock.getElapsedTime() * _fps;
+			_clock.stop();
+			float timePosition	= _clock.microseconds() * 0.000001 * _fps;
 			_curFrame = _loopStart + (cast(uint)timePosition) % frameCount; // correct that way 
 			
-			debug logfln("%f:%d\t%d",_clock.getElapsedTime(), _curFrame);
+//			debug logfln("%f:%d\t%d",_clock.getElapsedTime(), _curFrame);
  
 			setSubRect(getFrameRect(_curFrame));
 		}
@@ -146,6 +151,11 @@ public:
 		}
 		
 		void curFrame(uint i)
+		in
+		{
+			assert(i >= 0 && i < numFrames);
+		}
+		body
 		{
 			_curFrame = i;
 		}

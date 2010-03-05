@@ -38,6 +38,9 @@ private:
 	ubyte[][] _spriteData;
 	ubyte _transparencyColor; // the color used for transparency TODO: do this better
 
+	uint _spriteSheetWidth; // used temporarily for opSlice
+	uint _spriteSheetHeight;
+	
 	void checkHeader()
 	{
 //		if(_header.magic!="MFB")
@@ -81,15 +84,9 @@ public:
 		} // for numSprites
 	}
 
-	@property
+	~this()
 	{
-		ushort width()			{return _header.width;} /// width property
-	//	void width(ushort rhs)	{_header.width=rhs;} /// ditto
-		ushort height()			{return _header.height;} /// height property
-	//	void height(ushort rhs)	{_header.height=rhs;} /// ditto
-		ushort numSprites()			{return _header.numSprites;} /// getter
-	//	void numSprites(ushort rhs)	{_header.numS
-		ushort flags()			{return _header.flags;} /// flags getter
+		delete _spriteData;
 	}
 	
 	/// returns sprite at index i as RGBA data
@@ -117,21 +114,21 @@ public:
 		return opSlice(0, _header.numSprites);
 	}
 	
-	/// return sprites s .. e in a single image
+	/// return sprites s .. e in a single image with height rows and width columns
 	RGBA[] opSlice(size_t s, size_t e)
 	{
 		usePalette(0);
 		auto buffer = new RGBA[_header.width*_header.height * _header.numSprites];
 		
-//		uint width	= cast(uint) sqrtf(cast(float) _header.numImages);
-//		uint height	= cast(uint) (((cast(float) _header.numImages) / height) + 0.5f);
-		uint height = 1;
-		uint width = _header.numSprites;
+		uint width	= cast(uint) (sqrtf(cast(float) _header.numSprites) + 0.5); // round(sqrt(x))
+		uint height	= cast(uint) ceilf((cast(float) _header.numSprites) / width); // round up
+//		uint height = 1;
+//		uint width = _header.numSprites;
 		
 		uint bufIndex = 0;
-		for(uint y=0; y<_header.height; y++)
+		for(uint j=0; j<height; j++)
 		{
-			for(uint j=0; j<height; j++)
+			for(uint y=0; y<_header.height; y++)
 			{
 				for(uint i=0; i<width; i++)
 				{
@@ -143,7 +140,8 @@ public:
 					
 			}
 		}
-		
+		_spriteSheetWidth = width;
+		_spriteSheetHeight = height;
 		return buffer;
 	}
 	
@@ -218,5 +216,18 @@ public:
 				output[outPos++] = input[inPos++];
 			}
 		}
+	}
+	
+	@property
+	{
+		uint spriteSheetWidth()	{return _spriteSheetWidth;}
+		uint spriteSheetHeight(){return _spriteSheetHeight;}
+		ushort width()			{return _header.width;} /// width property
+	//	void width(ushort rhs)	{_header.width=rhs;} /// ditto
+		ushort height()			{return _header.height;} /// height property
+	//	void height(ushort rhs)	{_header.height=rhs;} /// ditto
+		ushort numSprites()			{return _header.numSprites;} /// getter
+	//	void numSprites(ushort rhs)	{_header.numS
+		ushort flags()			{return _header.flags;} /// flags getter
 	}
 }
