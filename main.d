@@ -48,13 +48,11 @@ void main()
 	tileMarker.setPosition(77, 60);
 	
 	auto videobox = new BOXFile("VIDEO.BOX");
-	auto mfb = new MFBFile(videobox["maptile.MFB"]);
-	
-	auto images = new Image[mfb.numSprites];
-	for(uint i=0; i<mfb.numSprites; i++)
-	{
-		images[i] = new Image(mfb.width, mfb.height, cast(ubyte[]) mfb[i]);
-	}
+	auto mfb = new MFBFile(videobox["maptile.MFB"], true);
+	auto tilesheetdata = cast(ubyte[]) mfb[]; // generate a single image with all tiles
+	auto tilesheet = new Image(mfb.spriteSheetWidth, mfb.spriteSheetHeight, tilesheetdata);
+
+	auto map = new StaggeredMap(25, 70, window, tilesheet);
 
 	auto mfb2 = new MFBFile(videobox["woman.MFB"]);
 	auto sheet = cast(ubyte[]) mfb2[];
@@ -66,8 +64,6 @@ void main()
 	Sprite testSpriteSheetSprite = new Sprite(testSpriteSheetImage);
 	testSpriteSheetSprite.setPosition(100.f, 150.f);
 	
-	auto map = new StaggeredMap(25, 70, window, images);
-
 	// position display
 	Text viewPos = new Text(""c);
 	viewPos.setCharacterSize(24);

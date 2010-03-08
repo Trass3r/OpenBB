@@ -7,8 +7,10 @@ import openbb.layer;
 import openbb.tile;
 import openbb.entity;
 
+import dsfml.graphics.rect;
 import dsfml.graphics.renderwindow;
 import dsfml.graphics.image;
+import dsfml.graphics.irendertarget;
 import dsfml.graphics.sprite;
 import dsfml.system.vector2;
 
@@ -34,8 +36,8 @@ private:
 	Tile[]			_tiles;
 	Entity[uint]	_entities;
 	Layer[]			_layers;
-	RenderWindow	_rendertarget;
-	Image[]			_images;
+	IRenderTarget	_rendertarget;
+	Image			_tilesheet;
 	//entrypoint
 	
 	ushort			_tilewidth;
@@ -44,19 +46,30 @@ private:
 	ushort			_mapheight;
 public:
 	
-	this(ushort width, ushort height, RenderWindow window, Image[] images)
+	/// create a map with width * height tiles from tilesheet, rendered to window
+	this(ushort width, ushort height, IRenderTarget window, Image tilesheet, ushort tilewidth = 77, ushort tileheight = 40)
 	{
 		_mapwidth = width;
 		_mapheight = height;
-		_tilewidth = cast(ushort) images[0].getWidth();
-		_tileheight = cast(ushort) (images[0].getHeight()-5);
+		_tilewidth = tilewidth;
+		_tileheight = tileheight;
 		_rendertarget = window;
-		_images = images;
+		_tilesheet = tilesheet;
 		_tiles = new Tile[width*height];
+		
+		// calculate how much tiles are in each row and column in tilesheet
+		uint sheetWidth = tilesheet.getWidth / tilewidth;
+		uint sheetHeight = tilesheet.getHeight / tileheight;
+		
 		for(uint i=0; i<width*height; i++)
 		{
-			auto r = cast(ushort) uniform(0, images.length);
-			_tiles[i] = Tile(new Sprite(images[r]), r, 0);
+			auto r = cast(ushort) uniform(0, sheetWidth * sheetHeight);
+			Sprite spr = new Sprite(_tilesheet);
+			uint y = r / sheetWidth;
+			uint x = r % sheetWidth;
+			
+			spr.setSubRect = IntRect(x * tilewidth, y * tileheight, (x+1) * tilewidth, (y+1) * tileheight);
+			_tiles[i] = Tile(spr, r, 0);
 		}
 		
 		for(uint x=0; x<width; x++)
@@ -81,9 +94,9 @@ public:
 class StaggeredMap : Map
 {
 	///
-	this(ushort width, ushort height, RenderWindow window, Image[] images)
+	this(ushort width, ushort height, IRenderTarget target, Image tilesheet, ushort tilewidth = 77, ushort tileheight = 40)
 	{
-		super(width, height, window, images);
+		super(width, height, target, tilesheet, tilewidth, tileheight);
 	}
 	
 	/// render the map
@@ -116,9 +129,9 @@ class StaggeredMap : Map
 class DiamondMap : Map
 {
 	///
-	this(ushort width, ushort height, RenderWindow window, Image[] images)
+	this(ushort width, ushort height, IRenderTarget target, Image tilesheet, ushort tilewidth = 77, ushort tileheight = 40)
 	{
-		super(width, height, window, images);
+		super(width, height, target, tilesheet, tilewidth, tileheight);
 	}
 
 	/// render the map
