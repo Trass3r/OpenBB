@@ -24,7 +24,7 @@ import std.string;
 
 void main()
 {
-	RenderWindow window = new RenderWindow(VideoMode(1024, 768), "OpenBB", Style.Default, ContextSettings(24,8,0,2,0));
+	RenderWindow window = new RenderWindow(VideoMode(1024, 768), "OpenBB", Style.Default, ContextSettings(24,8,0,3,1));
 //	window.setFramerateLimit(60);
 
 	// testing lua
@@ -50,13 +50,13 @@ void main()
 	auto videobox = new BOXFile("VIDEO.BOX");
 	auto mfb = new MFBFile(videobox["maptile.MFB"], true);
 	auto tilesheetdata = cast(ubyte[]) mfb[]; // generate a single image with all tiles
-	auto tilesheet = new Image(mfb.spriteSheetWidth, mfb.spriteSheetHeight, tilesheetdata);
+	auto tilesheet = new Image(mfb.spriteSheetWidth*mfb.width, mfb.spriteSheetHeight*mfb.height, tilesheetdata);
 
 	auto map = new StaggeredMap(25, 70, window, tilesheet);
 
 	auto mfb2 = new MFBFile(videobox["woman.MFB"]);
 	auto sheet = cast(ubyte[]) mfb2[];
-	Image testSpriteSheetImage = new Image(mfb2.spriteSheetWidth, mfb2.spriteSheetHeight, sheet);
+	Image testSpriteSheetImage = new Image(mfb2.spriteSheetWidth*mfb2.width, mfb2.spriteSheetHeight*mfb2.height, sheet);
 	auto animation = new Animation(testSpriteSheetImage, mfb2.width, mfb2.height);
 	animation.setPosition(100.f, 50.f);
 	animation.loopSpeed = 10;

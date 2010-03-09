@@ -70,7 +70,10 @@ public:
 
 		uint pos = Header.sizeof;
 		
-		uint spriteSize = _header.width * (_header.height - isMaptile?5:0);
+		if (isMaptile)
+			_header.height -= 5; // first 5 rows in maptile images are empty
+		
+		uint spriteSize = _header.width * _header.height;
 		
 		_spriteData = new ubyte[][](_header.numSprites, spriteSize);
 		for(uint i=0; i<_header.numSprites; i++)
@@ -105,6 +108,7 @@ public:
 	}
 	
 	/// returns sprite at index i as RGBA data
+	// TODO: call opSlice(index, index+1) here?
 	RGBA[] opIndex(size_t index, ubyte paletteIdx = 0)
 	in
 	{
@@ -149,7 +153,10 @@ public:
 				{
 					for(uint x=0; x<_header.width; x++)
 					{
-						buffer[bufIndex++] = palette[_spriteData[j*width+i][y*_header.width+x]];
+						if (j*width+i < _header.numSprites)
+							buffer[bufIndex++] = _spriteData[j*width+i][y*_header.width+x] == _transparencyColor ? RGBA(0,0,0,0) : palette[_spriteData[j*width+i][y*_header.width+x]];
+						else
+							buffer[bufIndex++] = Color.MAGENTA; // use something salient to detect when this sprite is accidentally used
 					}
 				}
 					
