@@ -1,7 +1,7 @@
 module openbb.common;
 
 public import openbb.log;
-
+public import openbb.exceptions;
 public import dsfml.graphics.color;
 
 import std.string;

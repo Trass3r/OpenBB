@@ -14,6 +14,7 @@ import openbb.graphics.animation;
 import openbb.graphics.gui;
 import openbb.io.palette;
 import openbb.io.boxfile;
+import openbb.io.fatfile;
 import openbb.io.mfbfile;
 import openbb.map;
 //import openbb.lua;
@@ -47,6 +48,12 @@ void main()
 	tileMarker.setOutlineWidth(2);
 	tileMarker.setPosition(77, 60);
 	
+	auto bbrbankfat = new FATFile("BBRBANK.FAT");
+	auto buffer = new SoundBuffer(bbrbankfat[40], 1, 22050);
+	auto sound = new Sound(buffer);
+
+	sound.play();
+	
 	auto videobox = new BOXFile("VIDEO.BOX");
 	auto mfb = new MFBFile(videobox["maptile.MFB"], true);
 	auto tilesheetdata = cast(ubyte[]) mfb[]; // generate a single image with all tiles
@@ -58,7 +65,7 @@ void main()
 	auto sheet = cast(ubyte[]) mfb2[];
 	Image testSpriteSheetImage = new Image(mfb2.spriteSheetWidth*mfb2.width, mfb2.spriteSheetHeight*mfb2.height, sheet);
 	auto animation = new Animation(testSpriteSheetImage, mfb2.width, mfb2.height);
-	animation.setPosition(100.f, 50.f);
+	animation.setPosition(100.f, 70.f);
 	animation.loopSpeed = 10;
 	animation.play();
 	Sprite testSpriteSheetSprite = new Sprite(testSpriteSheetImage);
@@ -178,8 +185,8 @@ void main()
 		++iFps;
 		window.draw(fps);
 
-		window.draw(viewPos);
-		window.draw(worldPos);
+//		window.draw(viewPos);
+//		window.draw(worldPos);
 		
 		window.display();
 	}
