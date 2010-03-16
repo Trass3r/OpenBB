@@ -47,7 +47,7 @@ private struct Entry
 	
 	string toString()
 	{
-		return std.string.format("filename %s path %s timestamp %s", filename, path, timestamp);
+		return std.string.format("filename: %s\tpath: %s\ttimestamp: %s\tfilesize: %d", fromStringz(cast(ichar*)filename), fromStringz(cast(ichar*)path), timestamp, size);
 	}
 }
 
@@ -69,6 +69,11 @@ public:
 		readArchive();
 	}
 
+	invariant()
+	{
+		assert(_entryHeaders.length == _entryData.length);
+	}
+	
 	/// read in the archive contents
 	void readArchive()
 	{
@@ -213,7 +218,19 @@ public:
 		return fromStringz(cast(ichar*) _entryHeaders[idx].filename);
 	}
 	
-	@property	
+	/// dump archive directory information
+	void dump(string filename)
+	{
+		auto hIn = new std.stream.File(filename, FileMode.Out);
+		scope(exit) hIn.close();
+		
+		for(uint i=0; i<_entryHeaders.length; i++)
+		{
+			hIn.write(cast(ubyte[]) _entryHeaders[i].toString() ~ '\n');
+		}
+	}
+
+	@property
 	{
 		/// number of files in the archive
 		uint numFiles()

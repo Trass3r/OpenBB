@@ -127,7 +127,7 @@ void main()
 				case EventType.MouseButtonPressed:
 					if (evt.MouseButton.Button == MouseButtons.Left)
 					{
-						top = window.convertCoords(input.getMouseX(), input.getMouseY());
+						top = window.convertCoords(input.mouseX, input.mouseY);
 						mousePressed = true;
 					}
 					break;
@@ -144,7 +144,7 @@ void main()
 				case EventType.MouseMoved:
 					if (mousePressed)
 					{
-						Vector2f bottom = window.convertCoords(input.getMouseX(), input.getMouseY());
+						Vector2f bottom = window.convertCoords(input.mouseX, input.mouseY);
 						bound = FloatRect(top.x, top.y, bottom.x, bottom.y);
 						s = Shape.rectangle(top.x, top.y, bottom.x, bottom.y, Color(0, 0, 0, 0), 1, Color.WHITE);
 					}
@@ -186,8 +186,8 @@ void main()
 			window.view = view;
 		}
 
-		auto vec = window.convertCoords(input.getMouseX(), input.getMouseY());
-		viewPos.text = std.string.format("Window coordinates: (%d %d)", input.getMouseX(), input.getMouseY());
+		auto vec = window.convertCoords(input.mouseX, input.mouseY);
+		viewPos.text = std.string.format("Window coordinates: (%d %d)", input.mouseX, input.mouseY);
 		worldPos.text = std.string.format("World coordinates: (%f %f)", vec.x, vec.y);
 		
 		window.clear(Color.WHITE);

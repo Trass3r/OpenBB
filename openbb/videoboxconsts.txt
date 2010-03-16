@@ -1,0 +1,752 @@
+building = 1 - normal building, 2 - constuction site
+static building = no construction site
+
+size	#Sprites	Flags	filename	    description
+
+Male Peasant
+============
+41x32		48		111		villager.MFB	man walking animation
+41x32		12		111		m_still.MFB		man idle animation
+54x36		5		111		d_male.MFB      man dieing animation
+41x32		40		111		mthrow.MFB		man attack animation
+
+41x32		10		111		m_chkill.MFB	man kills chicken animation
+11x13		2		1		m_drink.MFB		man drinks animation
+58x40		8		111		m_scythe.MFB	man scythes animation
+66x45		8		111		mharvest.MFB	man harvest scythe animation
+27x48		4		11		bushk_ml.MFB	man gets shred animation
+55x75		21		111		m_shaker.MFB	man shaking apple tree animation
+41x32		48		111		m_logs.MFB		man carrying logs walking animation
+73x60		6		111		m_chop.MFB		man chopping tree animation
+41x32		48		111		fleemale.MFB	man fleeing
+41x32		48		111		m_barrel.MFB	man carrying barrel animation
+41x32		6		111		malewave.MFB	man waving animation
+41x32		48		111		sackmale.MFB	man carrying wheat sack animation
+37x31		4		111		vsaw.MFB		man sawing animation
+41x32		16		111		manham.MFB		man topping out animation
+34x35		4		111		vpick.MFB		male peasant picks stones
+
+41x32		48		111		m_weddin.MFB	man groom walking animation
+
+45x42		13		1		m_exec.MFB		male execution animation
+
+
+Female Peasant
+==============
+41x32		48		111		woman.MFB		woman walking animation
+41x32		12		111		f_still.MFB		woman idle animation
+54x36		5		111		d_fema.MFB		woman dieing animation
+41x32		40		111		fthrow.MFB		woman attack animation
+
+41x32		10		111		f_chkill.MFB	woman kills chicken animation
+10x16		2		1		f_drink.MFB		woman drinks animation
+58x40		8		111		f_scythe.MFB	woman scythes animation
+66x45		8		111		fharvest.MFB	woman harvest scythe animation	
+27x48		4		11		bushk_fl.MFB	woman gets shred animation
+55x75		21		111		f_shaker.MFB	woman shaking apple tree animation	
+41x32		48		111		f_logs.MFB		woman carrying logs walking animation
+73x60		6		111		f_chop.MFB		woman chopping tree animation
+41x32		6		1		wo_axe.MFB		woman with axe animation
+41x32		48		1		wo_water.MFB	woman carrying water walking animation
+41x32		48		111		fleefema.MFB	woman fleeing
+41x32		48		111		barlfema.MFB	woman carrying barrel animation
+41x32		6		111		femawave.MFB	woman waving animation
+41x32		48		111		sackfema.MFB	woman carrying wheat sack animation
+41x32		48		111		f_milk.MFB		female carrying milk animation
+50x37		4		111		milking.MFB		female milking animation
+
+41x32		48		111		f_weddin.MFB	woman bride walking animation
+
+45x42		13		1		f_exec.MFB		female execution animation
+
+Boy
+===
+41x32		48		111		kidm.MFB		male kid walking animation
+41x32		12		111		boystill.MFB	boy idle animation
+54x36		5		111		d_kidm.MFB		dieing kid animation
+
+Girl
+====
+41x32		48		111		kidf.MFB		female kid walking animation
+41x32		12		111		girlstil.MFB	girl idle animation
+54x36		5		111		d_kidf.MFB		dieing female kid animation
+
+Elder Male
+==========
+41x32		48		111		elderm.MFB		elder man walking animation
+54x36		5		111		d_oldm.MFB		elder man dieing
+
+
+Elder Female
+============
+41x32		48		111		elderf.MFB		elder woman walking animation
+54x36		5		111		d_oldw.MFB		elder woman dieing
+
+Builder
+=======
+41x32		48		111		reparman.MFB	builder walking animation
+41x32		1		111		rp_still.MFB	builder idle animation
+54x36		5		111		d_buil.MFB		builder dieing
+27x48		4		11		bushk_rp.MFB	builder gets shred animation
+41x32		16		111		hammer.MFB		builder topping out animation
+37x32		6		111		saw.MFB			builder sawing animation
+34x35		6		111		pick.MFB		builder picks stones
+
+Priest
+======
+41x32		48		111		priest.MFB		priest walking animation
+41x32		12		111		pr_still.MFB	priest idle animation
+54x36		5		111		d_prie.MFB		priest dieing
+27x48		4		11		bushk_pr.MFB	priest gets shred animation
+41x32		48		111		fleeprie.MFB	priest fleeing animation
+41x32		6		111		vicowave.MFB	priest waving animation	
+41x32		11		111		pri_heal.MFB	priest healing animation
+41x32		11		11		healovr.MFB		heal overlay
+
+Taxman
+======
+41x32		48		111		taxman.MFB		taxman walking animation
+41x32		1		111		tx_still.MFB	taxman idle, no animation, single sprite
+54x36		5		111		d_taxm.MFB		taxman dieing
+
+
+Peasant stuff
+=============
+55x31		1		111		owner.MFB		city center marker
+39x51		8		11		campfire.MFB	city center fire animation
+77x40		10		111		sleepers.MFB	sleeping peasants around fire
+18x14		1		11		speech.MFB		speech bubble
+49x41		13		11		thoughts.MFB	peasant thought bubbles
+31x9		9		11		health.MFB		peasant health bar
+
+102x102		18		11		statbust.MFB	peasant avatars!
+41x32		30		111		starve.MFB		man, woman, priest, elders starving animation
+41x32		12		1		frozemen.MFB	frozen peasants
+26x26		10		1		sdie01.MFB		man gets drawn into the ground animation
+24x12		1		111		skeleton.MFB	dead skeleton
+30x25		4		111		baby.MFB		baby born animation
+
+Cow
+===
+54x47		56		111		cowwalk.MFB		cow walking animation
+51x34		13		111		so_cow.MFB		cow idle animation
+51x42		13		111		we_cow.MFB		
+51x34		13		111		ea_cow.MFB		
+51x42		13		111		no_cow.MFB		
+15x26		7		111		ea_ctail.MFB	only the cow tail animated
+15x26		7		111		so_ctail.MFB		
+22x28		13		111		we_ctail.MFB		
+22x28		13		111		no_ctail.MFB		
+34x21		2		111		cowborn.MFB		growing cow stages
+54x50		11		111		cowchopf.MFB	cow gets head chopped by female
+54x50		11		111		cowchopm.MFB	by male
+61x40		6		111		cowkill.mfb		killed cow animation
+52x40		6		111		cowdie.MFB		dieing cow animation
+58x58		12		111		cowplode.MFB	cow explodes
+15x10		1		111		cowshed.MFB		
+
+Chevalier
+=========
+55x48		32		111		cavalier.MFB	chevalier walking animation
+100x65		40		111		cavatta.MFB		chevalier attack animation
+60x49		5		111		d_cava.MFB		chevalier dieing
+
+Foot soldier
+============
+41x32		48		111		footwalk.MFB	foot soldier walking animation
+41x32		12		111		ft_still.MFB	foot soldier idle animation
+41x32		48		111		footatta.MFB	foot soldier attack animation
+54x36		5		111		d_foot.MFB		foot soldier dieing
+23x12		1		111		footdie.MFB		dead foot soldier
+
+Knight
+======
+41x36		48		111		knigwalk.mfb	knight walking animation
+41x32		12		111		kn_still.MFB	knight idle animation
+107x64		56		111		knigatta.MFB	knight attacking animation
+54x36		5		111		d_knig.MFB		knight dieing
+47x27		7		111		knigdie.MFB		knight dieing
+
+Pikeman
+=======
+41x32		1		111		pk_still.MFB	pikeman idle animation
+41x32		48		111		pikewalk.mfb	pikeman walking animation
+54x36		5		111		d_pike.MFB		pikeman dieing
+41x32		24		111		pikeatta.MFB	pikeman attack
+
+Wizard
+======
+41x32		48		111		wizwalk.MFB		wizard walking animation
+41x32		12		111		wz_still.MFB	wizard idle animation
+54x36		5		111		d_wiza.MFB		wizard dieing
+27x12		1		111		wizadie.MFB		dead wizard
+51x39		5		111		so_wizap.MFB	wizard shooting
+55x39		5		111		we_wizap.MFB	
+55x39		5		111		no_wizap.MFB	
+51x39		5		111		ea_wizap.MFB	
+23x23		6		111		shock.MFB		
+41x32		8		111		wizcast.MFB		wizard casting
+41x32		8		111		wizaim.MFB		wizard aiming in directions
+41x32		3		111		fireseed.MFB	wizard
+
+Archer
+======
+41x32		48		111		archer.MFB		archer walking animation
+41x32		1		111		arc_stil.MFB	archer static idle
+54x36		5		111		d_arch.MFB		archer dieing
+41x32		32		111		archshoo.MFB	archer shooting animation
+13x13		20		111		shoot.MFB		bolt flying
+
+Jester
+======
+54x36		5		111		d_jest.MFB		jester dieing
+41x32		5		111		juggler.MFB		court jester, throwing balls animation
+41x32		5		111		minjuggl.MFB	jester juggling
+41x32		48		111		minstrel.MFB	court jester? walking animation
+41x32		5		111		minbow.MFB		jester takes a bow animation
+41x32		5		111		minlyre.MFB		jester playing guitar animation
+
+Flamethrower
+============
+41x32		48		1		flamewlk.MFB	flamethrower walking animation
+64x45		10		1		fl_east.MFB		flamethrower shooting animations
+21x59		10		1		fl_soea.MFB		
+64x45		10		1		fl_sout.MFB		
+94x32		10		1		fl_sowe.MFB		
+64x45		10		1		fl_nort.MFB		
+94x32		10		1		fl_noea.MFB		
+64x45		10		1		fl_west.MFB		
+22x65		10		1		fl_nowe.MFB		
+41x32		16		1		firing.MFB		flame solder without flame shooting with gun animation
+
+41x32		48		1		soldier.MFB		some soldier walking animation
+
+Monk
+====
+41x32		48		111		monkwalk.MFB	monk walking animation
+41x32		4		111		mk_stil.MFB		monk with fork animation
+
+Catapult
+========
+56x48		6		11		ctsomove.MFB	catapult moving animation
+56x48		6		11		cteamove.MFB		
+56x41		6		11		ctnomove.MFB		
+56x41		6		11		ctwemove.MFB	catapult firing
+56x48		2		11		cteafire.MFB		
+56x54		2		11		ctwefire.MFB		
+56x54		2		11		ctnofire.MFB		
+56x48		2		11		ctsofire.MFB		
+
+Wolf
+====
+53x47		32		111		wolf.MFB		wolf walking animation
+53x47		8		111		wolfstil.MFB	wolf idle directions
+58x59		8		111		wolfatta.MFB	wolf attack directions
+37x19		1		111		wolfdead.MFB	dead wolf
+
+53x47		8		111		dw_still.MFB	dark wolf idle	
+53x47		32		111		dw_walk.MFB		dark wolf walking animation
+58x59		8		111		dw_attak.MFB	dark wolf attack animation
+37x19		1		111		darkdead.MFB	dead dark wolf
+
+Wasp
+====
+53x49		48		111		wasp.MFB		wasp walking animation
+53x49		48		111		waspat.MFB		wasp attack animation
+34x22		1		111		waspdead.MFB	dead wasp
+
+53x49		48		111		bloodwsp.MFB	blood wasp walking animation
+53x49		48		111		bldsting.MFB	blood wasp attack animation
+34x22		1		111		bloodead.MFB	dead blood wasp
+
+Zombie
+======
+53x44		48		111		zombie.MFB		zombie walking animation
+93x71		32		111		zombatta.MFB	zombie attack animation
+49x69		2		1		spkzomb.MFB		zombie gets spiked
+24x40		10		111		s_summon.MFB	summoned zombie
+34x20		1		111		zombdead.MFB	dead zombie
+
+Buildings
+=========
+77x45		16		101		roads.MFB		roads!
+
+16x19		1		1		ni_gran.MFB		???
+97x77		4		111		granover.MFB	
+
+66x45		1		111		chikfeld.MFB	chicken tile static building
+21x15		2		111		chickegg.MFB	chicken eggs
+12x10		4		111		cocker.MFB		chicken
+13x12		8		111		chicken.MFB		chicken idle animation
+30x31		9		111		feed.MFB		woman feeds chicken from farm animation
+
+217x147		2		111		peashut.MFB		peasant hut building
+25x26		1		111		peasover.MFB	peasant hut overlay
+78x36		1		11		l_peas01.MFB	peasant hut night windows
+
+162x129		2		111		toolshed.mfb	building, builder's guild
+27x71		1		11		l_work01.MFB	builder's guild? night windows
+23x38		1		101		workover.MFB		
+
+202x180		2		111		bakery.MFB		bakery building
+21x38		1		101		bakeover.MFB
+142x42		1		11		l_bake01.MFB	night windows	
+99x115		4		111		bakeanim.MFB	bakery mill wheel animation
+58x40		2		111		wheatovr.MFB	wheat overlay
+66x45		6		111		crops.MFB		wheat, crops
+
+213x160		2		111		farm.MFB		farm building
+25x43		1		101		farmover.MFB		
+98x56		1		1		ni_farm.MFB		
+69x48		1		11		l_farm01.MFB	farm night windows
+
+77x56		16		111		fence.MFB		fence node
+100x64		6		111		gate.MFB		fence gates
+77x56		16		111		snwfence.MFB	fence node snow
+55x44		1		111		logchair.MFB	fence log chair
+
+133x110		2		111		well.MFB		well building
+19x31		1		101		wellover.MFB	
+65x37		3		111		wellwate.MFB	
+38x50		1		11		l_well01.MFB	night windows
+
+199x143		3		111		cabin.MFB       destructable building, but 2nd sprite is destroyed version
+79x74		2		111		cabiover.MFB	
+
+221x221		1		111		chapel.mfb		static building
+220x220		2		111		church.MFB		building
+20x34		1		111		churover.mfb	church overlay
+67x31		1		11		l_holy01.MFB	night windows for certain buildings
+24x40		1		11		l_holy02.MFB		
+
+198x167		2		111		th_nodo.mfb		townhall building
+92x76		2		111		th_over.MFB		glowing window
+16x19		1		1		ni_townh.MFB	
+86x55		1		11		l_tax01.MFB		night windows??
+33x42		1		111		taxover.MFB		
+31x37		12		100		ticktock.MFB	clock at town hall animation
+19x12		1		1		mn_thall.MFB		
+
+179x153		2		111		brewery.MFB		brewery building
+26x29		1		101		brewover.MFB		
+22x36		1		11		l_brew01.MFB	brewery night windows
+51x65		3		111		brewbig.MFB		brewery flowing alc animation
+22x30		2		111		brewsmal.MFB		
+
+287x211		2		111		keep.MFB		knight's castle building
+18x30		1		111		keepdoor.MFB		
+
+35x24		1		11		l_wiz01.MFB		wizard's guild night windows
+
+132x139		2		111		fletcher.MFB	archer building
+23x37		1		111		archdoor.MFB	door overlay	
+22x35		1		11		l_arch01.MFB	archer's night windows
+
+140x124		2		111		jail.MFB		jail building
+17x35		1		111		jaildoor.MFB		
+
+118x129		2		111		fguild.MFB		foot soldiers building
+21x38		1		111		footdoor.MFB		
+
+137x141		2		111		stables.MFB		building
+23x44		1		111		stabdoor.MFB	door overlays
+
+210x181		3		11		castle.MFB		some other castle building
+
+260x131		3		111		pub.MFB			destroyable building
+51x56		4		111		pubover.MFB		
+145x67		1		1		ni_pub.MFB		pub glowing windows, matches
+
+180x114		2		111		tent.MFB		building
+
+189x159		1		111		lookout.MFB		static building
+53x34		8		111		look_ov.MFB		guy in observation tower looking in all directions
+26x36		4		111		bellring.MFB	guy in watchtower gives alert
+
+134x123		3		111		hut.MFB			single hut, strangely all 3 sprites are the same
+108x123		4		111		hutover.MFB		
+
+222x143		1		1		barrack.MFB		static building
+
+118x157		1		111		treehous.mfb	static building
+
+206x185		2		111		summon.MFB		building
+
+86x97		1		111		zombtomb.MFB	static building
+64x63		1		111		hive.MFB		static building
+
+Interface
+=========
+640x42		1		0		topbar.MFB		bar at the top showing resources etc.
+112x91		10		1		products.MFB	product avatars
+124x157		1		1		prodbox.MFB		
+34x33		15		1		butinv.MFB		interface buttons
+14x11		2		0		onoff.MFB		checkbox
+14x13		10		1		numbers.MFB		digits for interface, gold amount
+
+640x480		1		0		mapback.MFB		minimap background
+42x41		7		1		icons.MFB		some cursors
+34x22		3		1		x2x3.MFB		
+42x41		27		1		butico.mfb		more cursors
+
+129x124		1		11		mainring.MFB	wizard spell selection ring
+27x28		14		11		runes.MFB		spell buttons
+27x28		14		11		runeinv.MFB		pressed wizard spell buttons
+
+207x442		1		11		toolbar.MFB		prices for goods interface background
+33x31		11		11		options.MFB		options buttons
+27x21		5		0		slider.MFB		
+20x22		1		11		thumbup.MFB		
+20x23		1		11		thumbdn.MFB		
+
+
+25x23		33		1		thumnail.MFB		
+30x29		23		1		tb_inv.MFB		
+33x34		9		1		egg.MFB			animation of shelled egg
+77x50		28		1		breeder.MFB		something coming out of egg
+24x19		7		1		worm.MFB		egg worm
+37x39		2		1		thumper.MFB		tamper animation
+5x56		15		0		energy.MFB		energy bar
+25x16		1		0		ar_south.MFB		
+83x73		2		111		appsprig.mfb	2 trees
+47x68		2		111		appltree.MFB	tree with and without apples
+25x15		1		0		ar_west.MFB		arrows
+27x16		1		0		ar_north.MFB		
+27x17		1		0		ar_east.MFB		
+79x51		20		101		hills.MFB		tiles with elevation
+79x51		12		101		100hill.MFB		
+79x51		26		1		tileptr.MFB		the cursor shape
+79x51		12		101		75hill.MFB		
+79x51		12		101		50hill.MFB		tiles with % snow
+79x51		12		101		25hill.MFB		
+26x23		8		0		COLOURS.MFB		
+70x43		16		1		TOWIN.MFB		some rotating thing on top of a building
+108x58		1		1		TOWREAL.MFB		some socket
+70x43		16		1		TOWOUT.MFB		same as Townin?
+23x30		12		111		time.MFB		watch hand animation
+60x58		2		0		gotoeye.MFB		
+219x89		1		1		beastit.MFB		logo
+640x480		1		0		page.MFB		main menu background
+84x85		1		1		wwsymbol.MFB	
+9x9		6		1		hilite.MFB		
+33x27		9		11		spirt.MFB		blood
+49x34		1		111		trough.MFB		
+5x56		15		0		hbar.MFB		like energy bar
+5x57		14		1		hbarovr.MFB		
+640x480		1		0		statscre.MFB	stats alpha screenshot
+60x60		40		0		busts.MFB		some avatars
+70x90		3		0		scrolbar.MFB		
+28x27		1		1		magnify.MFB		magnifier
+45x60		6		11		torch.MFB		torch cursor
+13x8		1		1		mn_cabin.MFB		
+19x13		1		1		mn_gran.MFB		
+11x8		1		1		mn_tshed.MFB		
+11x7		2		111		mn_well.MFB		
+13x10		2		111		mn_farm.MFB		
+19x17		1		1		mn_cathd.MFB		
+13x10		2		111		mn_brew.MFB		
+19x10		1		1		mn_pub.MFB		
+11x9		1		1		mn_watch.MFB		
+418x159		1		11		news.MFB		news background
+60x60		2		0		picture.MFB		
+85x71		1		1		portrait.MFB		
+29x10		5		0		fullness.MFB		
+82x100		2		101		tester.MFB		tree, summer and winter
+32x26		10		111		flag.MFB		
+16x13		1		1		miniflag.MFB		
+102x88		2		111		tree01.MFB		trees, summer and winter
+65x54		2		111		tree02.MFB		
+102x88		2		111		apples.MFB		
+108x89		2		111		tree03.MFB		
+65x54		2		111		tree04.MFB		
+102x88		2		111		tree05.MFB		
+5x7		    1		1		minitree.MFB		
+55x59		1		111		tree10.MFB		
+55x59		1		111		tree11.MFB		
+33x30		1		111		sap_fir.MFB		
+33x27		1		111		sap_oak.MFB		
+45x76		11		11		lgtning.MFB		lightning animation
+101x38		4		11		blkcloud.MFB		
+101x38		4		111		cloud.MFB		
+41x38		12		111		gasmold.MFB		gas out of ground animation
+41x38		12		111		smolder.MFB		smoke out of ground animation
+26x28		2		1		wheat.MFB		single wheat, not the normal one
+3x15		3		1		flow.MFB		
+59x89		6		1		hourglas.MFB	hourglass animation	
+67x43		4		11		armed.MFB		armbow in 4 directions
+88x49		4		11		fired.MFB		same after firing
+37x21		4		11		bolt.MFB		
+9x8			1		11		c_target.MFB		
+25x23		1		1		wait.MFB		
+23x29		10		11		burn.MFB		flames animation
+23x29		10		11		flames.MFB		same
+79x51		12		1		swmphill.MFB	
+77x85		16		101		wall.MFB		walls in different variations
+14x28		4		1		doogle.MFB		hovering arrow
+77x45		1		1		glue.MFB		
+66x43		4		1		hosttop.MFB		some talking guy with beard animation
+66x38		4		1		hostbot.MFB		part2
+94x58		1		1		body.MFB		body part
+41x32		7		11		aargh.MFB		fire?
+24x22		1		11		urepair.MFB		
+103x17		1		111		murd_wst.MFB	slaughtered peasant bodies
+18x18		8		111		acidbolt.MFB	acid bolt
+5x5			5		1		sparkle.MFB		
+640x90		1		0		botbar.MFB		bar, showing wall
+77x74		5		1		landmark.MFB	
+37x37		2		1		target.MFB		
+29x39		1		1		outline.MFB		
+77x44		8		111		spike.MFB		spike trap
+37x26		2		1		skulls.MFB		
+59x44		1		111		bench.MFB		bench
+15x20		1		111		beer.MFB		beer barrel
+144x43		1		1		ni_cabin.MFB	night windows
+158x187		1		1		ni_cathd.MFB		
+14x13		1		1		ni_tools.MFB		
+66x72		6		111		rain.MFB		rain animation
+162x100		9		111		firebomb.MFB	
+89x78		4		1		barbed.MFB		some fence
+49x40		9		1		lamp.MFB		
+79x57		16		11		bridge.MFB		
+77x40		13		1		equake.MFB		
+10x7		4		111		rocks.MFB		
+13x14		1		1		fireball.MFB		
+33x29		11		1		gas.MFB		
+77x64		6		111		snicket.MFB		
+77x45		132		101		maptile.MFB		
+10x8		7		1		shrapnel.MFB		
+24x19		2		1		hand.MFB		all kinds of cursors
+26x15		1		1		selected.MFB		
+42x35		1		1		ufight.MFB		
+24x24		6		1		ufreeze.MFB		
+28x20		2		1		ugrab.MFB		
+20x27		2		1		uheal.MFB		
+20x32		2		1		umove.MFB		
+20x42		1		11		uguild.MFB		
+36x20		3		11		capture.MFB		
+24x34		2		11		urotate.MFB		
+77x45		4		111		oilslick.MFB		
+24x49		2		1		curve.MFB		
+29x49		10		1		part.MFB		
+6x49		2		1		cons.MFB		
+29x39		42		1		botthum.MFB		
+29x10		1		0		buildin.MFB		
+74x60		14		1		explode.MFB		explosion animation
+61x33		1		111		pile01.MFB		stones?
+113x60		1		111		pile02.MFB		
+203x119		1		111		pile03.MFB		
+203x119		1		111		pile04.MFB		
+312x133		1		111		pile05.MFB		
+7x7			5		1		magic.MFB		
+77x45		10		1		turf.MFB		grasnarbe oder grab
+34x30		8		111		poison.MFB		mushrooms
+24x41		9		11		flamepit.MFB	flame trap
+15x9		1		111		flamedev.MFB		
+88x71		64		111		fiend.MFB		overlord enemy flying animation
+35x45		3		11		shaker.MFB		spy in bush shaking animation
+29x48		6		11		bushman.MFB		spy in bush walking animation
+17x6		3		10		busheyes.MFB		
+74x70		7		1		salepost.MFB	for sale signs
+77x45		12		111		missmoke.MFB	
+77x40		15		1		swamp.MFB		
+31x20		1		1		CRATE.MFB		
+60x60		40		0		greyout.MFB		
+21x21		1		1		titpoint.MFB		
+80x48		5		1		Probe.MFB		
+24x23		2		1		mineskul.MFB		
+15x17		1		1		airstrik.MFB		
+55x35		1		111		logs.MFB		baumstämme gestapelt
+36x23		1		111		stump.MFB		tree stump
+79x51		12		101		sandhill.MFB		
+78x69		1		111		execblok.MFB		
+41x32		1		1		execstil.MFB		
+23x12		1		111		flagdie.MFB		flag bearer dead
+41x32		1		111		fg_still.MFB	flag bearer static idle	
+41x32		48		111		flagwalk.MFB	flag bearer walking animation
+23x12		1		111		pikedie.MFB		dead pikeman
+47x27		7		111		blood.MFB		blood spirts
+41x32		6		111		buzz.MFB		
+41x32		48		111		bombman.MFB		bombman walking animation
+41x32		1		1		bombfroz.MFB	bombman frozen
+35x26		3		111		cross.MFB		grave
+60x60		7		0		mapbits.MFB		for editor?!
+640x480		1		0		letscr.MFB		letter background
+640x480		1		0		yakoff.MFB		alpha release background
+47x51		3		11		reply.MFB		letter reply cursors
+51x80		1		11		waxseal.MFB		wax seal
+48x19		1		11		mail.MFB		got mail interface button
+36x35		10		1		buttons.MFB		interface buttons
+204x122		1		1		topmap.MFB		minimap outline
+383x235		1		0		punish.MFB		punishment settings
+32x32		3		10		sentance.MFB		
+32x32		3		0		sentence.MFB		
+77x40		15		1		100over.MFB		
+77x40		16		1		50over.MFB		
+31x32		1		111		grave01.MFB		
+61x63		8		11		twirl.MFB		spell casting eye animation
+290x140		1		11		success.MFB		mission complete
+282x139		1		11		failure.MFB		mission failure
+11x11		8		111		mace.MFB		mace flying
+23x23		6		11		electro.MFB		
+26x20		1		111		pigsy.MFB		
+22x26		2		111		plot.MFB		
+41x38		7		111		hutsmoke.MFB	hut smoking animation
+77x45		132		101		winter.MFB		
+11x10		2		111		mn_arch.MFB		
+13x11		2		111		mn_bake.MFB		
+3x5			2		111		mn_battl.MFB		
+15x15		2		111		mn_chur.MFB		
+11x7		2		111		mn_jail.MFB		
+11x8		2		111		mn_peas.MFB		
+11x10		2		111		mn_stabl.MFB		
+19x11		2		111		mn_tax.MFB		
+11x8		2		111		mn_tent.MFB		
+11x9		2		111		mn_work.MFB		
+11x11		2		111		mn_wiz.MFB		
+23x16		5		111		acidhit.MFB		acid hits target animation
+67x95		2		111		bigfir.MFB		tree summer/winter
+19x22		4		111		sign.MFB		waggling sign at building animation
+23x43		2		11		lantern.MFB		
+25x49		4		111		gob_silv.MFB	silver cup hovering animation
+25x49		4		111		gob_gold.MFB		
+15x28		5		111		pot_blue.MFB		
+15x28		5		111		pot_red.MFB		
+15x28		5		111		pot_gren.MFB		
+5x5		4		11		spk_gold.MFB		
+5x5		4		11		spk_silv.MFB		
+27x22		1		111		goldcoin.MFB	some gold laying around	
+46x44		1		111		paganrok.MFB		
+115x94		1		111		pagnbulk.MFB	stonehenge altar thing	
+69x49		32		111		catapult.MFB	other catapult walking animation
+77x45		1		111		rubble.MFB		
+640x480		1		0		credits.MFB		
+18x18		8		111		sword.MFB		
+69x70		16		111		catfire.MFB		catapult firing animation
+87x63		32		111		crossbow.MFB	crossbow walking animation
+87x63		8		111		cbolt.MFB		crossbow bolt
+80x66		2		101		tester2.MFB		tree summer/winter
+77x51		1		101		rock01.MFB		
+77x58		1		101		rock02.MFB		
+78x64		1		101		rock03.MFB		
+77x74		1		101		rock04.MFB		
+77x56		1		101		rock05.MFB		
+78x55		1		101		rock06.MFB		
+17x18		4		1		corners.MFB		
+2x7	    	4		0		bar02.MFB		
+4x7	       	4		0		bar04.MFB		
+8x7	    	4		0		bar08.MFB		
+16x7		4		0		bar16.MFB		
+32x7		4		0		bar32.MFB		
+1x7	    	4		0		bar01.MFB		
+1x7		    1		0		bar.MFB		
+29x42		4		111		helmet.MFB		hovering helmet
+25x37		4		111		shield.MFB		hovering shield
+172x168		1		111		ship.MFB		static ship
+283x259		1		11		stock_l.MFB		
+258x258		1		11		stock_r.MFB		
+21x29		4		11		stocks.MFB		goods
+66x66		1		11		b_okinv.MFB		
+47x23		1		0		b_evict.MFB		
+100x6		1		0		tab.MFB		
+71x61		48		111		bat.MFB			bat walking animation
+49x19		1		111		deadbat.MFB		dead bat
+34x41		48		111		giant.MFB		giant walking animation
+64x62		32		111		gianatt.MFB		giant attack animation
+41x56		7		111		mspells.MFB		
+41x56		7		111		pspells.mfb		
+22x57		4		111		holyswrd.MFB	hovering holy sword
+66x49		2		111		grave.MFB		grave summer/winter
+37x64		4		111		magring.MFB		hovering
+35x53		4		111		crucifix.MFB	hovering
+33x41		14		111		tablets.MFB		hovering
+27x7		1		111		shadow.MFB		shadow!
+27x27		12		11		s_tport.MFB		
+30x31		32		11		s_fireb.MFB		fire bolt
+21x16		4		11		d_flame.MFB		
+66x48		4		11		d_spike.MFB		
+	
+77x51		16		101		rockrim.MFB		rocks
+77x51		16		101		srokrim.MFB		snow rocks
+103x82		6		111		mgate.mfb		magic gate that can be opened with magic
+25x21		4		111		mkey.MFB		magic key
+17x34		4		111		shovel.MFB		hovering shovel
+53x52		48		111		ogrewalk.MFB	ogre walking animation
+69x47		56		111		ogreatta.MFB	ogre attack animation
+19x15		32		11		ogrefire.MFB		
+82x100		2		111		forest1.MFB		trees
+80x66		2		111		forest2.MFB		
+43x27		3		111		lever.MFB		
+48x64		4		111		cloak.MFB		hovering cloak
+35x64		4		111		power.MFB		hovering
+62x48		7		111		vampbat.MFB		vampie with bats animation
+16x31		6		111		vampstil.MFB	vampire idle animation
+25x35		1		111		trigger.MFB		
+123x89		8		111		batatta.MFB		bat attack directions
+640x480		1		0		mission.MFB		briefing background
+77x45		4		111		youth.MFB		youth spring
+77x52		8		111		shrub.MFB		
+14x16		1		111		shrub_a.MFB		
+31x31		1		111		shrub_b.MFB		
+57x38		2		111		altar.MFB		
+41x46		4		111		spooky.MFB		
+77x43		16		111		gfence.MFB		other fences
+77x43		12		111		special.MFB		
+77x43		16		111		wgfence.MFB		
+77x43		12		111		wspecial.MFB		
+32x42		1		11		unoguild.MFB	cursor peasant no guild animation
+25x30		8		11		ueat.MFB		order peasant eat animation
+73x22		3		11		uleave.MFB		order pesant leave guild animation
+25x54		1		11		utame.MFB		order get cow static
+45x35		4		11		seasons.MFB		seasons buttons
+640x444		1		0		stats.MFB		stats, options, settings background
+23x18		4		11		statmini.MFB	
+108x19		1		0		smallinv.MFB		
+179x25		1		0		biginv.MFB		
+29x46		4		111		s_fear.MFB		
+53x37		8		111		s_see.MFB		
+14x14		1		11		s_heal.MFB		icon peasant healed
+56x39		6		11		s_ffood.MFB		
+18x18		14		11		artminis.MFB		
+31x28		1		11		udrop.MFB		order drop cow ?
+4x12		3		11		loadpart.MFB		
+640x480		1		0		loading.MFB		
+2x2	    	6		0		dots.MFB		
+640x480		1		0		m1back.MFB		mission backgrounds
+640x480		1		0		m2back.MFB		
+640x480		1		0		m3back.MFB		
+640x480		1		0		m4back.MFB		
+640x480		1		0		m5back.MFB		
+640x480		1		0		m7back.MFB		
+640x480		1		0		m9back.MFB		
+640x480		1		0		m11back.MFB		
+24x24		6		11		s_cure.MFB		order heal cure pest animation
+32x26		1		111		giandead.MFB	dead giant
+640x439		1		0		greystat.MFB	greyed stats settings options background
+231x107		1		11		btit0.MFB		
+231x107		1		11		btit1.MFB		logos
+237x110		1		11		btit2.MFB		
+231x107		1		11		btit3.MFB		
+231x107		1		11		btit4.MFB		
+34x20		8		11		zombglow.MFB		
+46x21		1		111		ogredead.MFB	dead ogre
+37x47		1		111		ogrestil.MFB	ogre idle static
+23x33		1		111		gianstil.MFB	giant idle static
+54x36		5		111		d_bride.MFB		dieing bride animation
+54x36		5		111		d_groom.MFB		dieing groom animation
+27x46		11		111		vampdead.MFB	dieing vampire animation
+27x27		12		11		s_flash.MFB		
+11x10		1		111		mn_foot.MFB		
+11x9		1		111		mn_look.MFB		
+17x13		1		111		mn_keep.MFB		
+7x3		1		111		rockshad.MFB		
+208x98		1		11		eng01.MFB		
+207x97		1		11		eng02.MFB		
+208x98		1		11		fre01.MFB		
+206x98		1		11		fre02.MFB		mission complete etc.
+348x101		1		11		ger01.MFB		
+351x99		1		11		ger02.MFB		
+254x98		1		11		ita01.MFB		
+232x99		1		11		ita02.MFB		
+364x105		1		11		spa01.MFB		
+480x100		1		11		spa02.MFB		
+22x24		2		11		where.MFB		
