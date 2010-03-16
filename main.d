@@ -10,6 +10,7 @@ import dsfml.audio.all;
 import dsfml.network.all;
 
 import openbb.common;
+import openbb.dynamicentity;
 import openbb.graphics.animation;
 import openbb.graphics.gui;
 import openbb.io.palette;
@@ -36,58 +37,65 @@ void main()
 	Shape s;
 	bool mousePressed;
 	
-	Input input = window.getInput();
+	Input input = window.input;
 
 	Shape tileMarker = new Shape();
 	tileMarker.addPoint(0, 20, Color(255,0,0,100), Color.WHITE);
 	tileMarker.addPoint(77.f/2.f, 40, Color(255,0,0,100), Color.WHITE);
 	tileMarker.addPoint(77, 20, Color(255,0,0,100), Color.WHITE);
 	tileMarker.addPoint(77.f/2.f, 0, Color(255,0,0,100), Color.WHITE);
-	tileMarker.enableFill(true);
-	tileMarker.enableOutline(false);
-	tileMarker.setOutlineWidth(2);
+	tileMarker.enableFill = true;
+	tileMarker.enableOutline = false;
+	tileMarker.outlineWidth = 2;
 	tileMarker.setPosition(77, 60);
 	
+	// test ambient sounds
+	uint curSound = 0;
 	auto bbrbankfat = new FATFile("BBRBANK.FAT");
-	auto buffer = new SoundBuffer(bbrbankfat[40], 1, 22050);
+	auto buffer = new SoundBuffer(bbrbankfat[curSound], 1, 22050);
 	auto sound = new Sound(buffer);
 
 	sound.play();
+	
 	
 	auto videobox = new BOXFile("VIDEO.BOX");
 	auto mfb = new MFBFile(videobox["maptile.MFB"], true);
 	auto tilesheetdata = cast(ubyte[]) mfb[]; // generate a single image with all tiles
 	auto tilesheet = new Image(mfb.spriteSheetWidth*mfb.width, mfb.spriteSheetHeight*mfb.height, tilesheetdata);
 
+//	tilesheet.saveToFile("maptile");
+	
+//	tilesheet.smooth = false; // remove black outlines
+	
 	auto map = new StaggeredMap(25, 70, window, tilesheet);
 
+
+	// place a woman as a test
 	auto mfb2 = new MFBFile(videobox["woman.MFB"]);
 	auto sheet = cast(ubyte[]) mfb2[];
 	Image testSpriteSheetImage = new Image(mfb2.spriteSheetWidth*mfb2.width, mfb2.spriteSheetHeight*mfb2.height, sheet);
 	auto animation = new Animation(testSpriteSheetImage, mfb2.width, mfb2.height);
-	animation.setPosition(100.f, 70.f);
-	animation.loopSpeed = 10;
-	animation.play();
-	Sprite testSpriteSheetSprite = new Sprite(testSpriteSheetImage);
-	testSpriteSheetSprite.setPosition(100.f, 150.f);
 	
+	auto woman = new DynamicEntity(Vector2f(50f, 100f), animation);
+//	woman.walkAnimation = animation;
+
 	// position display
 	Text viewPos = new Text(""c);
-	viewPos.setCharacterSize(24);
+	viewPos.characterSize = 24;
 	viewPos.setPosition(100.f, 200.f);
-	viewPos.setColor(Color.BLACK);
+	viewPos.color = Color.BLACK;
 	
 	Text worldPos = new Text(""c);
-	worldPos.setCharacterSize(24);
+	worldPos.characterSize = 24;
 	worldPos.setPosition(100.f, 220.f);
-	worldPos.setColor(Color.BLACK);
+	worldPos.color = Color.BLACK;
 
 	// fps stuff
 	float framerate;
 	Text fps = new Text(""c);
-	fps.setCharacterSize(30);
+	fps.characterSize = 30;
 	fps.move(50.f, 25.f);
-	fps.setColor(Color.BLACK);
+	fps.color = Color.BLACK;
 	uint iFps = 0;
 	auto fpsClock = new PerformanceCounter();
 	while (window.isOpened())
@@ -98,6 +106,24 @@ void main()
 		{
 			switch(evt.Type)
 			{
+				case EventType.KeyPressed:
+					if (evt.Key.Code == KeyCode.Left)
+					{
+						writeln(curSound);
+						if (curSound == 0)
+							curSound = bbrbankfat.numFiles;
+						sound.buffer = new SoundBuffer(bbrbankfat[--curSound], 1, 22050);
+						sound.play();
+					}
+					else if (evt.Key.Code == KeyCode.Right)
+					{
+						writeln(curSound);
+						if (curSound >= bbrbankfat.numFiles-1)
+							curSound = -1;
+						sound.buffer = new SoundBuffer(bbrbankfat[++curSound], 1, 22050);
+						sound.play();
+					}
+					break;
 				case EventType.MouseButtonPressed:
 					if (evt.MouseButton.Button == MouseButtons.Left)
 					{
@@ -112,8 +138,8 @@ void main()
 					}
 					break;
 				case EventType.MouseWheelMoved:
-					View view = window.getView().zoom(evt.MouseWheel.Delta > 0 ? 0.8f : 1.25f); // * window.getFrameTime());
-					window.setView(view);
+					View view = window.view.zoom(evt.MouseWheel.Delta > 0 ? 0.8f : 1.25f); // * window.frameTime);
+					window.view = view;
 					break;
 				case EventType.MouseMoved:
 					if (mousePressed)
@@ -132,53 +158,56 @@ void main()
 		if(input.isKeyDown(KeyCode.Return))
 		{
 			if (bound != FloatRect())
-				window.setView(new View(bound));
+				window.view = new View(bound);
 			s = null;
 		}
 		if(input.isKeyDown(KeyCode.Escape))
 		{
-			window.setView(window.getDefaultView());
+			window.view = window.defaultView;
 		}
 		if(input.isKeyDown(KeyCode.Left))
 		{
-			View view = window.getView().move(-1000 * window.getFrameTime(), 0);
-			window.setView(view);
+			View view = window.view.move(-1000 * window.frameTime, 0);
+			window.view = view;
 		}
 		if(input.isKeyDown(KeyCode.Right))
 		{
-			View view = window.getView().move(1000 * window.getFrameTime(), 0);
-			window.setView(view);
+			View view = window.view.move(1000 * window.frameTime, 0);
+			window.view = view;
 		}
 		if(input.isKeyDown(KeyCode.Up))
 		{
-			View view = window.getView().move(0, -1000 * window.getFrameTime());
-			window.setView(view);
+			View view = window.view.move(0, -1000 * window.frameTime);
+			window.view = view;
 		}
 		if(input.isKeyDown(KeyCode.Down))
 		{
-			View view = window.getView().move(0, 1000 * window.getFrameTime());
-			window.setView(view);
+			View view = window.view.move(0, 1000 * window.frameTime);
+			window.view = view;
 		}
 
 		auto vec = window.convertCoords(input.getMouseX(), input.getMouseY());
-		viewPos.setString(std.string.format("Window coordinates: (%d %d)", input.getMouseX(), input.getMouseY()));
-		worldPos.setString(std.string.format("World coordinates: (%f %f)", vec.x, vec.y));
+		viewPos.text = std.string.format("Window coordinates: (%d %d)", input.getMouseX(), input.getMouseY());
+		worldPos.text = std.string.format("World coordinates: (%f %f)", vec.x, vec.y);
 		
 		window.clear(Color.WHITE);
 		map.render();
 		auto m = map.convertMapToGlobal(map.convertGlobalToMap(Vector2i(cast(int) vec.x, cast(int) vec.y)));
-		tileMarker.setPosition(Vector2f(cast(float) m.x, cast(float) m.y+5));
+		tileMarker.position = Vector2f(cast(float) m.x, cast(float) m.y+5);
 		window.draw(tileMarker);
 		if (s !is null) window.draw(s);
 
 //		window.draw(testSpriteSheetSprite);
-		window.draw(animation);
-		animation.update();
+
+		float dt = window.frameTime * 1000; // in ms
+		
+		woman.update(dt);
+		woman.render(window);
 		
 		fpsClock.stop();
 		if(fpsClock.seconds >= 1)
 		{
-			fps.setString(std.string.format("%d fps", iFps));
+			fps.text = std.string.format("%d fps", iFps);
 			iFps = 0;
 			fpsClock.start();
 		}

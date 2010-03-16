@@ -57,6 +57,14 @@ public:
 	{
 		return cast(short[]) _data[_directory[i].offset .. _directory[i].offset + _directory[i].size];
 	}
+	
+@property
+{
+	uint numFiles()
+	{
+		return _numFiles;
+	}
+}
 /*
 	string toString()
 	{

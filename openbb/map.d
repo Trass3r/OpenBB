@@ -58,8 +58,8 @@ public:
 		_tiles = new Tile[width*height];
 		
 		// calculate how much tiles are in each row and column in tilesheet
-		uint sheetWidth = tilesheet.getWidth / tilewidth;
-		uint sheetHeight = tilesheet.getHeight / tileheight;
+		uint sheetWidth = tilesheet.width / tilewidth;
+		uint sheetHeight = tilesheet.height / tileheight;
 		
 		for(uint i=0; i<width*height; i++)
 		{
@@ -68,7 +68,7 @@ public:
 			uint y = r / sheetWidth;
 			uint x = r % sheetWidth;
 			
-			spr.setSubRect = IntRect(x * tilewidth, y * tileheight, (x+1) * tilewidth, (y+1) * tileheight);
+			spr.subRect = IntRect(x * tilewidth, y * tileheight, (x+1) * tilewidth, (y+1) * tileheight);
 			_tiles[i] = Tile(spr, r, 0);
 		}
 		
@@ -135,7 +135,7 @@ class DiamondMap : Map
 	}
 
 	/// render the map
-	void render()
+	override void render()
 	{
 		for(uint i; i<_mapwidth; i++)
 		{

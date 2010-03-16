@@ -3,6 +3,7 @@
  */
 module openbb.dynamicentity;
 
+import dsfml.graphics.irendertarget;
 import dsfml.system.vector2;
 import openbb.graphics.animation;
 import openbb.map;
@@ -44,9 +45,14 @@ protected:
 
 public:
 	
-	this(Vector2f pos, Vector2i size, Animation walkAnim)
+	this(Vector2f pos, Animation walkAnim)
 	{
-		super(pos, size);
+		super(pos);
+		
+		walkAnim.position = pos;
+		walkAnim.loopSpeed = 10;
+		walkAnim.play(); // TODO: this needs to be done in walking handling code
+
 		_walkAnim = walkAnim;
 	}
 	
@@ -60,20 +66,31 @@ public:
 		return this;
 	}
 
-	DynamicEntity update()
+	//
+	override DynamicEntity update(float dt)
 	{
-		_pos = 
-			uint frameCount		= _loopEnd - _loopStart;
+		//_pos = 
+/*			uint frameCount		= _loopEnd - _loopStart;
 		float timePosition	= _clock.getElapsedTime() * _fps;
 		_curFrame = _loopStart + (cast(uint)timePosition) % frameCount; // correct that way 
+*/
+		return this;
+	}
+
+	override DynamicEntity render(IRenderTarget rendertarget)
+	{
+		_walkAnim.update();
+		rendertarget.draw(_walkAnim);
 
 		return this;
 	}
 
 	@property
 	{
-		Vector2f	velocity()	{return _velocity;}
+		Vector2f	velocity()				{return _velocity;}
+		void		velocity(Vector2f vel)	{_velocity = vel;}
 		
-		void velocity(Vector2f vel)	{_velocity = vel;}
+		Animation	walkAnimation()				{return _walkAnim;}
+		void		walkAnimation(Animation a)	{_walkAnim = a;}
 	}
 }

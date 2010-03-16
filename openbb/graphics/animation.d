@@ -17,7 +17,6 @@ import dsfml.graphics.sprite;
  *	this extends Sprite to implement animated sprites
  *	uses a single Image containing all animation frames
  */
-
 class Animation : Sprite
 {
 private:
@@ -43,8 +42,8 @@ public:
 		_frameWidth	= frameWidth;
 		_frameHeight= frameHeight;
 		
-		_sheetWidth	= image.getWidth() / frameWidth;
-		_sheetHeight= image.getHeight() / frameHeight;
+		_sheetWidth	= image.width / frameWidth;
+		_sheetHeight= image.height / frameHeight;
 	}
 	
 	~this()
@@ -58,12 +57,12 @@ public:
 	*		img = New image
 	*		adjustToNewSize = adjust sprite subrect to new image size
 	*/
-	void setImage(Image img, bool adjustToNewSize = false)
+	override void setImage(Image img, bool adjustToNewSize = false)
 	{
 		Sprite.setImage(img, adjustToNewSize);
 
-		_sheetWidth	= img.getWidth() / _frameWidth;
-		_sheetHeight= img.getHeight() / _frameHeight;
+		_sheetWidth	= img.width / _frameWidth;
+		_sheetHeight= img.height / _frameHeight;
 	}
 	
 	/// TODO: leave protected?		
@@ -125,7 +124,7 @@ public:
 			
 //			debug logfln("%f:%d\t%d",_clock.getElapsedTime(), _curFrame);
  
-			setSubRect(getFrameRect(_curFrame));
+			subRect = getFrameRect(_curFrame);
 		}
 	}
 	@property
@@ -170,8 +169,8 @@ public:
 			_frameWidth	= newsize.x;
 			_frameHeight= newsize.y;
 
-			_sheetWidth	= getImage().getWidth() / _frameWidth;
-			_sheetHeight= getImage().getHeight() / _frameHeight;
+			_sheetWidth	= image().width / _frameWidth;
+			_sheetHeight= image().height / _frameHeight;
 		}
 	}
 }
