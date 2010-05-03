@@ -157,8 +157,8 @@ void main()
             if (evt.Type == EventType.MouseMoved && mousePressed)
             {
                 Vector2f bottom = window.convertCoords(input.mouseX, input.mouseY);
-                bound = FloatRect(top.x, top.y, bottom.x, bottom.y);
-                s = Shape.rectangle(top.x, top.y, bottom.x, bottom.y, Color(0, 0, 0, 0), 1, Color.WHITE);
+				bound = FloatRect(top.x, top.y, bottom.x-top.x, bottom.y-top.y);
+				s = Shape.rectangle(top.x, top.y, bottom.x-top.x, bottom.y-top.y, Color(0, 0, 0, 0), 1, Color.WHITE);
             }
             else if (evt.Type == EventType.Closed)
                 window.close();

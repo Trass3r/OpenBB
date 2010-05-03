@@ -68,7 +68,7 @@ public:
 			uint y = r / sheetWidth;
 			uint x = r % sheetWidth;
 			
-			spr.subRect = IntRect(x * tilewidth, y * tileheight, (x+1) * tilewidth, (y+1) * tileheight);
+			spr.subRect = IntRect(x * tilewidth, y * tileheight, tilewidth, tileheight);
 			_tiles[i] = Tile(spr, r, 0);
 		}
 		

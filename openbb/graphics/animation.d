@@ -73,8 +73,8 @@ public:
 		
 		return IntRect(	x * _frameWidth,
 						y * _frameHeight,
-					(x+1) * _frameWidth,
-					(y+1) * _frameHeight);
+						_frameWidth,
+						_frameHeight);
 	}
 	
 	/// play frames [startFrame, endFrame)
