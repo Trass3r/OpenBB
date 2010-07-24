@@ -3,7 +3,7 @@
  */
 module openbb.staticentity;
 
-import dsfml.system.vector2;
+import dsfml.system.vector;
 import openbb.entity;
 
 

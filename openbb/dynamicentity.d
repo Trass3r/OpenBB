@@ -4,7 +4,7 @@
 module openbb.dynamicentity;
 
 import dsfml.graphics.irendertarget;
-import dsfml.system.vector2;
+import dsfml.system.vector;
 import openbb.graphics.animation;
 import openbb.map;
 import openbb.entity;

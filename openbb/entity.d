@@ -5,7 +5,7 @@ module openbb.entity;
 
 import openbb.graphics.animation;
 import dsfml.graphics.irendertarget;
-import dsfml.system.vector2;
+import dsfml.system.vector;
 
 abstract class Entity
 {
@@ -33,7 +33,7 @@ public:
 	
 	Entity move(Vector2f delta)
 	{
-		_pos = _pos + delta;
+		_pos += delta;
 
 		return this;
 	}

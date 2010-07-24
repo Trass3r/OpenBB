@@ -12,7 +12,7 @@ import dsfml.graphics.renderwindow;
 import dsfml.graphics.image;
 import dsfml.graphics.irendertarget;
 import dsfml.graphics.sprite;
-import dsfml.system.vector2;
+import dsfml.system.vector;
 
 import std.random;
 
@@ -25,9 +25,6 @@ const South		= Vector2f(0.0f, 1.0f);
 const SouthWest	= Vector2f(-1.0f, 0.5f);
 const West		= Vector2f(-1.0f, 0.0f);
 const NorthWest	= Vector2f(-1.0f, -0.5f);
-
-
-alias Vector2!(ushort) Vector2us;
 
 ///
 abstract class Map

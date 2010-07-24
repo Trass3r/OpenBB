@@ -4,7 +4,7 @@
 module openbb.building;
 
 import dsfml.graphics.renderwindow;
-import dsfml.system.vector2;
+import dsfml.system.vector;
 import openbb.graphics.animation;
 import openbb.staticentity;
 

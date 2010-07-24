@@ -7,7 +7,7 @@ import std.perf;
 
 import openbb.log;
 
-import dsfml.system.vector2;
+import dsfml.system.vector;
 import dsfml.graphics.image;
 import dsfml.graphics.rect;
 import dsfml.graphics.sprite;
