@@ -1,0 +1,1 @@
+dmd m10file.d cppver.obj -debug -g -unittest && cv2pdb -D2 m10file.exe
