@@ -186,7 +186,6 @@ protected:
 	}
 
 private:
-	S_inner_file_data	_input;
 	uint				_SampleBufferOffset; // TODO: size_t was c++ size_t
 	uint				_SamplesDecodedSoFar;
 	uint				_TotalSampleCount;
@@ -214,10 +213,9 @@ public:
 		writefln("Total sample count: %d", _TotalSampleCount);
 
 		// Initialize the decoder
-		_input = S_inner_file_data();
 		try
 		{
-			__mtInitializeDecoder(&_input, input[idx .. $].ptr);
+			__mtInitializeDecoder(input[idx .. $].ptr);
 			/*ofstream Output;
 			Output.open("log", ios_base::out | ios_base::binary);
 			Output.write((char*)_input, sizeof(S_inner_file_data));*/
@@ -252,7 +250,7 @@ public:
 			{
 				try
 				{
-					__mtDecodeBlock(&_input);
+					__mtDecodeBlock();
 				}
 				catch (Exception e)
 				{
@@ -262,7 +260,7 @@ public:
 				_SampleBufferOffset = 0;
 			}
 
-			Sample.Float += _input.sampleBuffer[_SampleBufferOffset];
+			Sample.Float += _sampleBuffer[_SampleBufferOffset];
 			_SampleBufferOffset++;
 			_SamplesDecodedSoFar++;
 
@@ -291,65 +289,62 @@ public:
 	}
 
 private:
-	struct S_inner_file_data // size: 3396
-	{
-		const(ubyte)*compressedData;// 0
-		uint		currentBits;	// 4
-		uint		bitCount;		// 8
-		uint		firstBit;		// C
-		uint		second4Bits;	// 10
-		float[64]	floatTable;		// 14
-		float[12]	table1;			// 114
-		float[12]	table2;			// 144 // TODO: auch float
-		float[324]	bigTable;		// 174
-		float[432]	sampleBuffer;	// 684
-	}								// D44 = 3396
+	const(ubyte)*_compressedData;// 0
+	uint		_currentBits;	// 4
+	uint		_bitCount;		// 8
+	uint		_firstBit;		// C
+	uint		_second4Bits;	// 10
+	float[64]	_floatTable;	// 14
+	float[12]	_table1;		// 114
+	float[12]	_table2;		// 144
+	float[324]	_bigTable;		// 174
+	float[432]	_sampleBuffer;	// 684
 
-	void __mtDecodeBlock(S_inner_file_data* inner)
+	void __mtDecodeBlock()
 	{
 		writeln("__mtDecodeBlock()");
 		float[12] tableA = 0;
 		float[118] tableB = 0;
 
-		uint Bits = getBits(inner, 6);
+		uint Bits = getBits(6);
 
-		int Flag = Bits < inner.second4Bits ? 1 : 0;
+		int Flag = Bits < _second4Bits ? 1 : 0;
 
-		tableA[0] = (flt_4D3A68[Bits] - inner.table1[0]) * 0.25f;
+		tableA[0] = (flt_4D3A68[Bits] - _table1[0]) * 0.25f;
 
 		for (uint i = 1; i < 4; i++)
 		{
-			Bits = getBits(inner, 6);
+			Bits = getBits(6);
 
-			tableA[i] = (flt_4D3A68[Bits] - inner.table1[i]) * 0.25f;
+			tableA[i] = (flt_4D3A68[Bits] - _table1[i]) * 0.25f;
 		}
 
 		for (uint i = 4; i < 12; i++)
 		{
-			Bits = getBits(inner, 5);
+			Bits = getBits(5);
 
-			tableA[i] = (flt_4D3A68[Bits + 16] - inner.table1[i]) * 0.25f;
+			tableA[i] = (flt_4D3A68[Bits + 16] - _table1[i]) * 0.25f;
 		}
 
-		float* CurSampleBufPtr = inner.sampleBuffer.ptr;
+		float* CurSampleBufPtr = _sampleBuffer.ptr;
 
 		for (uint i = 216; i < 648; i += 108)
 		{
-			uint BigTableIndex = i - getBits(inner, 8);
+			uint BigTableIndex = i - getBits(8);
 
-			float SomeFloat = getBits(inner, 4) * 2.0f / 30.0f; // * 0.0666666666666666666
-			float SomeOtherFloat = inner.floatTable[getBits(inner, 6)];
+			float SomeFloat = getBits(4) * 2.0f / 30.0f; // * 0.0666666666666666666
+			float SomeOtherFloat = _floatTable[getBits(6)];
 
-			if (!inner.firstBit)
+			if (!_firstBit)
 			{
-				function3(inner, Flag, tableB.ptr + 5, 1);
+				function3(Flag, tableB.ptr + 5, 1);
 			}
 			else
 			{
-				uint IndexAdjust = getBits(inner, 1);
-				Bits = getBits(inner, 1);
+				uint IndexAdjust = getBits(1);
+				Bits = getBits(1);
 
-				function3(inner, Flag, tableB.ptr + 5 + IndexAdjust, 2);
+				function3(Flag, tableB.ptr + 5 + IndexAdjust, 2);
 
 				if (Bits)
 				{
@@ -371,7 +366,7 @@ private:
 				}
 			}
 
-			float* BigTablePtr = inner.bigTable.ptr + BigTableIndex;
+			float* BigTablePtr = _bigTable.ptr + BigTableIndex;
 			
 			for (ubyte k = 0; k < 108; k++)
 			{
@@ -383,25 +378,25 @@ private:
 			for (uint k = 0; k < 108; k++)
 			{
 				float tmp = SomeOtherFloat * tableB[k + 5];
-				float tmp2 = SomeFloat * inner.bigTable[BigTableIndex + k];
+				float tmp2 = SomeFloat * _bigTable[BigTableIndex + k];
 				*CurSampleBufPtr = tmp + tmp2;
 				CurSampleBufPtr++;
 			}*/
 		}
 
-		inner.bigTable[0 .. 324] = inner.sampleBuffer[108 .. 432];
+		_bigTable[0 .. 324] = _sampleBuffer[108 .. 432];
 
-		inner.table1[] += tableA[];
-		function4(inner, 0, 1);
+		_table1[] += tableA[];
+		function4(0, 1);
 
-		inner.table1[] += tableA[];
-		function4(inner, 12, 1);
+		_table1[] += tableA[];
+		function4(12, 1);
 
-		inner.table1[] += tableA[];
-		function4(inner, 24, 1);
+		_table1[] += tableA[];
+		function4(24, 1);
 
-		inner.table1[] += tableA[];
-		function4(inner, 36, 33);
+		_table1[] += tableA[];
+		function4(36, 33);
 		return;
 	}
 
@@ -465,7 +460,7 @@ private:
 	}
 
 	//! 
-	void function3(S_inner_file_data* inner, int flag, float* outArray, uint countInt)
+	void function3(int flag, float* outArray, uint countInt)
 	{
 		writeln("function3()");
 		if (flag != 0)
@@ -476,12 +471,12 @@ private:
 			do
 			{
 				ubyte LookedUpValue;
-				uint Bits = inner.currentBits & 0xFF;;
+				uint Bits = _currentBits & 0xFF;;
 
 				LookedUpValue = byte_4D3B68[(HighBits << 8) + Bits];
 				HighBits = LookupTable[LookedUpValue].HighBits;
 
-				skipBits(inner, LookupTable[LookedUpValue].SkipBits);
+				skipBits(LookupTable[LookedUpValue].SkipBits);
 
 				if (LookedUpValue > 3)
 				{
@@ -490,7 +485,7 @@ private:
 				}
 				else if (LookedUpValue > 1)
 				{
-					uint Bits2 = getBits(inner, 6) + 7;
+					uint Bits2 = getBits(6) + 7;
 
 					if (Bits2 * countInt + Index > 108)
 					{
@@ -514,12 +509,12 @@ private:
 				{
 					int Count = 7;
 
-					while (getBits(inner, 1) == 1)
+					while (getBits(1) == 1)
 					{
 						Count++;
 					}
 
-					if (getBits(inner, 1))
+					if (getBits(1))
 					{
 						outArray[Index] = Count;
 					}
@@ -538,20 +533,20 @@ private:
 
 			do
 			{
-				switch (inner.currentBits & 0x3)
+				switch (_currentBits & 0x3)
 				{
 				case 1:
 					outArray[Index] = -2.0;
-					skipBits(inner, 2);
+					skipBits(2);
 					break;
 				case 3:
 					outArray[Index] = 2.0;
-					skipBits(inner, 2);
+					skipBits(2);
 					break;
 				case 2:
 				case 0:
 					outArray[Index] = 0;
-					skipBits(inner, 1);
+					skipBits(1);
 					break;
 				default:
 					break;
@@ -563,11 +558,11 @@ private:
 	}
 
 	//! 
-	void function4(S_inner_file_data* inner, uint Index, uint Count)
+	void function4(uint Index, uint Count)
 	{
 		writeln("function4()");
 		float[12] Buffer;
-		function2(inner.table1.ptr, Buffer.ptr);
+		function2(_table1.ptr, Buffer.ptr);
 
 		for (uint i = 0; i < 12*Count; i+=12)
 		{
@@ -576,12 +571,12 @@ private:
 				double Summation = 0.0;
 				for (uint j = 0; j < 12; j++)
 				{
-					Summation += inner.table2[j] * Buffer[(j + k) % 12];
+					Summation += _table2[j] * Buffer[(j + k) % 12];
 				}
 
-				double Result = inner.sampleBuffer[Index + i + k] + Summation;
-				inner.table2[11 - k] = Result;
-				inner.sampleBuffer[Index + i + k] = Result;
+				double Result = _sampleBuffer[Index + i + k] + Summation;
+				_table2[11 - k] = Result;
+				_sampleBuffer[Index + i + k] = Result;
 			}
 		}
 		return;
@@ -590,63 +585,63 @@ private:
 	static __gshared immutable uint[9] bitmask_lookup_table = [0, 1, 3, 7, 0x0F, 0x1F, 0x3F, 0x7F, 0x0FF];
 
 	//! reads count bits from the input stream (the CompressedData member of S_inner_file_data) and returns them
-	uint getBits(S_inner_file_data* buffer, uint count)
+	uint getBits(uint count)
 	{
-		uint res = buffer.currentBits & bitmask_lookup_table[count];
-		buffer.bitCount -= count;
-		buffer.currentBits >>= count; // note: count only byte!
+		uint res = _currentBits & bitmask_lookup_table[count];
+		_bitCount -= count;
+		_currentBits >>= count; // note: count only byte!
 		
-		if (buffer.bitCount < 8)
+		if (_bitCount < 8)
 		{
-			buffer.currentBits |= buffer.compressedData[0] << buffer.bitCount;
-			buffer.compressedData++;
-			buffer.bitCount += 8;
+			_currentBits |= _compressedData[0] << _bitCount;
+			_compressedData++;
+			_bitCount += 8;
 		}
 		return res;
 	}
 
 //	alias SkipBits skipBits;
-	void skipBits(S_inner_file_data* inner, uint Count)
+	void skipBits(uint Count)
 	{
-		inner.bitCount -= Count;
-		inner.currentBits >>= Count;
+		_bitCount -= Count;
+		_currentBits >>= Count;
 
-		if (inner.bitCount < 8)
+		if (_bitCount < 8)
 		{
-			inner.currentBits |= inner.compressedData[0] << inner.bitCount;
-			inner.compressedData++;
-			inner.bitCount += 8;
+			_currentBits |= _compressedData[0] << _bitCount;
+			_compressedData++;
+			_bitCount += 8;
 		}
 		return;
 	}
 
-	void __mtInitializeDecoder(S_inner_file_data* inner, const ubyte* inputBuffer)
+	void __mtInitializeDecoder(const ubyte* inputBuffer)
 	{
 		writeln("__mtInitializeDecoder()");
-		inner.currentBits	= inputBuffer[0];
-		inner.compressedData = inputBuffer+1;
-		inner.bitCount		= 8;
+		_currentBits	= inputBuffer[0];
+		_compressedData = inputBuffer+1;
+		_bitCount		= 8;
 		
-		inner.firstBit		= getBits(inner, 1);
-		inner.second4Bits	= 32 - getBits(inner, 4);
+		_firstBit		= getBits(1);
+		_second4Bits	= 32 - getBits(4);
 		
-		inner.floatTable[0] = (getBits(inner, 4) + 1) * 8.0;
+		_floatTable[0] = (getBits(4) + 1) * 8.0;
 
-		float ST1 = 1.04 + (getBits(inner, 6) * 0.001);
+		float ST1 = 1.04 + (getBits(6) * 0.001);
 		
 		for (uint i = 0; i < 63; i++)
-			inner.floatTable[i+1] = inner.floatTable[i] * ST1;
+			_floatTable[i+1] = _floatTable[i] * ST1;
 		
-		inner.table1 = 0;
-		inner.table2 = 0;
-		inner.bigTable = 0;
+		_table1 = 0;
+		_table2 = 0;
+		_bigTable = 0;
 		writeln("end __mtInit");
 	}
 } // class mtDecoder
 
 private __gshared immutable
 {
-float[] flt_4D3A68 = [0.0,	-0.99677598,	-0.990327,	-0.98387903,	-0.977431,
+float[64] flt_4D3A68 = [0.0,	-0.99677598,	-0.990327,	-0.98387903,	-0.977431,
 	-0.97098202,	-0.96453398,	-0.958085,		-0.95163703,
 	-0.93075401,	-0.90495998,	-0.87916702,	-0.85337299,
 	-0.82757902,	-0.80178601,	-0.77599198,	-0.75019801,
@@ -662,7 +657,7 @@ float[] flt_4D3A68 = [0.0,	-0.99677598,	-0.990327,	-0.98387903,	-0.977431,
 	0.95163703,		0.958085,		0.96453398,		0.97098202,
 	0.977431,		0.98387903,		0.990327,		0.99677598];
 
-ubyte[] byte_4D3B68 = [
+ubyte[512] byte_4D3B68 = [
 	4, 6, 5, 9, 4, 6, 5, 0x0D, 4, 6, 5, 0x0A, 4, 6, 5, 0x11,
 	4, 6, 5, 9, 4, 6, 5, 0x0E, 4, 6, 5, 0x0A, 4, 6, 5, 0x15,
 	4, 6, 5, 9, 4, 6, 5, 0x0D, 4, 6, 5, 0x0A, 4, 6, 5, 0x12,
@@ -705,7 +700,7 @@ struct LookupEntry
 	uint SkipBits;
 	float Float;
 }
-LookupEntry[] LookupTable = [
+LookupEntry[29] LookupTable = [
 	{1, 8, 0.0f},
 	{1, 7, 0.0f},
 	{0, 8, 0.0f},
