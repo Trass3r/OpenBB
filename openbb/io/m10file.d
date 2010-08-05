@@ -96,7 +96,7 @@ void WriteWaveHeader(ubyte[] Output, uint SampleRate,
 	return;
 }
 
-static uint ReadBytes(ubyte[] input)
+static uint readBytes(ubyte[] input)
 {
 	uint result;
 
@@ -111,12 +111,11 @@ static uint ReadBytes(ubyte[] input)
 class mtDecoder
 {
 protected:
-	uint ParsePTHeader(ubyte[] input)
+	uint parsePTHeader(ubyte[] input)
 	{
-		// Signature
-		char[2] Sig;
+		// check magic
 		if (input[0..2] != "PT")
-			throw new Exception("No PT header!");
+			throw new Exception("No PT file!");
 
 		uint idx = 4; // seek 2 from current
 
@@ -152,12 +151,12 @@ protected:
 					{
 					case 0x83:
 						b = input[idx++];
-						CompressionType = ReadBytes(input[idx..idx+b]);
+						CompressionType = readBytes(input[idx..idx+b]);
 						idx += b;
 						break;
 					case 0x85:
 						b = input[idx++];
-						_TotalSampleCount = ReadBytes(input[idx..idx+b]);
+						_TotalSampleCount = readBytes(input[idx..idx+b]);
 						idx += b;
 						break;
 					case 0xFF:
@@ -186,9 +185,9 @@ protected:
 	}
 
 private:
-	uint				_SampleBufferOffset; // TODO: size_t was c++ size_t
-	uint				_SamplesDecodedSoFar;
-	uint				_TotalSampleCount;
+	uint	_SampleBufferOffset; // TODO: size_t was c++ size_t
+	uint	_SamplesDecodedSoFar;
+	uint	_TotalSampleCount;
 
 public:
 	void Initialize(ubyte[] input)
@@ -204,7 +203,7 @@ public:
 		}
 
 		// Read the PT header
-		idx = ParsePTHeader(input);
+		idx = parsePTHeader(input);
 
 		// Load the file in
 		size_t DataSize;
@@ -215,10 +214,23 @@ public:
 		// Initialize the decoder
 		try
 		{
-			__mtInitializeDecoder(input[idx .. $].ptr);
-			/*ofstream Output;
-			Output.open("log", ios_base::out | ios_base::binary);
-			Output.write((char*)_input, sizeof(S_inner_file_data));*/
+			_currentBits	= input[idx];
+			_compressedData = input.ptr+idx+1;
+			_bitCount		= 8;
+			
+			_firstBit		= getBits(1);
+			_second4Bits	= 32 - getBits(4);
+			
+			_floatTable[0] = (getBits(4) + 1) * 8.0;
+
+			float ST1 = 1.04 + (getBits(6) * 0.001);
+			
+			for (uint i = 0; i < 63; i++)
+				_floatTable[i+1] = _floatTable[i] * ST1;
+			
+			_table1 = 0;
+			_table2 = 0;
+			_bigTable = 0;
 		}
 		catch (Exception e)
 		{
@@ -326,14 +338,14 @@ private:
 			tableA[i] = (flt_4D3A68[Bits + 16] - _table1[i]) * 0.25f;
 		}
 
-		float* CurSampleBufPtr = _sampleBuffer.ptr;
+		float* curSampleBufPtr = _sampleBuffer.ptr;
 
 		for (uint i = 216; i < 648; i += 108)
 		{
 			uint BigTableIndex = i - getBits(8);
 
-			float SomeFloat = getBits(4) * 2.0f / 30.0f; // * 0.0666666666666666666
-			float SomeOtherFloat = _floatTable[getBits(6)];
+			float someFloat = getBits(4) * 2.0f / 30.0f; // * 0.0666666666666666666
+			float someOtherFloat = _floatTable[getBits(6)];
 
 			if (!_firstBit)
 			{
@@ -362,7 +374,7 @@ private:
 					}
 
 					function1(&tableB[6 - IndexAdjust]);
-					SomeOtherFloat *= 0.5;
+					someOtherFloat *= 0.5;
 				}
 			}
 
@@ -370,17 +382,17 @@ private:
 			
 			for (ubyte k = 0; k < 108; k++)
 			{
-				*CurSampleBufPtr = SomeOtherFloat * tableB[k + 5] + SomeFloat * BigTablePtr[k];
-				CurSampleBufPtr++;
+				*curSampleBufPtr = someOtherFloat * tableB[k + 5] + someFloat * BigTablePtr[k];
+				curSampleBufPtr++;
 			}
 
 			/*
 			for (uint k = 0; k < 108; k++)
 			{
-				float tmp = SomeOtherFloat * tableB[k + 5];
-				float tmp2 = SomeFloat * _bigTable[BigTableIndex + k];
-				*CurSampleBufPtr = tmp + tmp2;
-				CurSampleBufPtr++;
+				float tmp = someOtherFloat * tableB[k + 5];
+				float tmp2 = someFloat * _bigTable[BigTableIndex + k];
+				*curSampleBufPtr = tmp + tmp2;
+				curSampleBufPtr++;
 			}*/
 		}
 
@@ -403,7 +415,6 @@ private:
 	//! 
 	static void function1(float* buffer)
 	{
-		writeln("function1()");
 		for (ubyte i = 0; i < 108; i+=2)
 		{
 			
@@ -415,47 +426,44 @@ private:
 	}
 
 	//! 
-	static void function2(float* innerTable1, float* Arg2)
+	static void function2(float* innerTable1, float* arg2)
 	{
 		writeln("function2()");
-		float[24] Table;
+		float[24] table;
 
 		for (ubyte i = 0; i < 11; i++)
 		{
-			Table[11 - i] = innerTable1[10 - i];
+			table[11 - i] = innerTable1[10 - i];
 		}
 
-		Table[0] = 1.0;
+		table[0] = 1.0;
 
 		for (uint i = 0; i < 12; i++)
 		{
-			double Previous;
-			Previous = -Table[11] * innerTable1[11];
+			double previous;
+			previous = -table[11] * innerTable1[11];
 
-			for (uint CounterC = 0; CounterC < 11; CounterC++)
+			for (uint k = 0; k < 11; k++)
 			{
-				float* PtrA = &Table[10 - CounterC];
-				float* PtrB = &innerTable1[10 - CounterC];
+				float* ptrA = &table[10 - k];
+				float* ptrB = &innerTable1[10 - k];
 
-				Previous -= (*PtrA) * (*PtrB);
-				Table[11 - CounterC] = Previous * (*PtrB) + (*PtrA);
+				previous -= (*ptrA) * (*ptrB);
+				table[11 - k] = previous * (*ptrB) + (*ptrA);
 			}
 
-			Table[0] = Previous;
-			Table[i + 12] = Previous;
+			table[0] = previous;
+			table[i + 12] = previous;
 
 			if (i > 0)
 			{
-				uint CounterA = i;
-				uint CounterB = i;
-
 				for (uint j = 0; j < i; j++)
 				{
-					Previous -= Table[11 + i - j] * Arg2[j];
+					previous -= table[11 + i - j] * arg2[j];
 				}
 			}
 
-			Arg2[i] = Previous;
+			arg2[i] = previous;
 		}
 	}
 
@@ -558,25 +566,24 @@ private:
 	}
 
 	//! 
-	void function4(uint Index, uint Count)
+	void function4(uint sampleBufferIdx, uint count)
 	{
-		writeln("function4()");
-		float[12] Buffer;
-		function2(_table1.ptr, Buffer.ptr);
+		float[12] buffer;
+		function2(_table1.ptr, buffer.ptr);
 
-		for (uint i = 0; i < 12*Count; i+=12)
+		for (uint i = 0; i < 12*count; i+=12)
 		{
-			for (uint k = 0; k < 12; k++)
+			for (uint j = 0; j < 12; j++)
 			{
 				double Summation = 0.0;
-				for (uint j = 0; j < 12; j++)
+				for (uint k = 0; k < 12; k++)
 				{
-					Summation += _table2[j] * Buffer[(j + k) % 12];
+					Summation += _table2[k] * buffer[(k + j) % 12];
 				}
 
-				double Result = _sampleBuffer[Index + i + k] + Summation;
-				_table2[11 - k] = Result;
-				_sampleBuffer[Index + i + k] = Result;
+				double Result = _sampleBuffer[sampleBufferIdx + i + j] + Summation;
+				_table2[11 - j] = Result;
+				_sampleBuffer[sampleBufferIdx + i + j] = Result;
 			}
 		}
 		return;
@@ -584,7 +591,7 @@ private:
 
 	static __gshared immutable uint[9] bitmask_lookup_table = [0, 1, 3, 7, 0x0F, 0x1F, 0x3F, 0x7F, 0x0FF];
 
-	//! reads count bits from the input stream (the CompressedData member of S_inner_file_data) and returns them
+	//! reads count bits from the input stream (the _compressedData member) and returns them
 	uint getBits(uint count)
 	{
 		uint res = _currentBits & bitmask_lookup_table[count];
@@ -600,11 +607,11 @@ private:
 		return res;
 	}
 
-//	alias SkipBits skipBits;
-	void skipBits(uint Count)
+	//! skip count bits
+	void skipBits(uint count)
 	{
-		_bitCount -= Count;
-		_currentBits >>= Count;
+		_bitCount -= count;
+		_currentBits >>= count;
 
 		if (_bitCount < 8)
 		{
@@ -613,29 +620,6 @@ private:
 			_bitCount += 8;
 		}
 		return;
-	}
-
-	void __mtInitializeDecoder(const ubyte* inputBuffer)
-	{
-		writeln("__mtInitializeDecoder()");
-		_currentBits	= inputBuffer[0];
-		_compressedData = inputBuffer+1;
-		_bitCount		= 8;
-		
-		_firstBit		= getBits(1);
-		_second4Bits	= 32 - getBits(4);
-		
-		_floatTable[0] = (getBits(4) + 1) * 8.0;
-
-		float ST1 = 1.04 + (getBits(6) * 0.001);
-		
-		for (uint i = 0; i < 63; i++)
-			_floatTable[i+1] = _floatTable[i] * ST1;
-		
-		_table1 = 0;
-		_table2 = 0;
-		_bigTable = 0;
-		writeln("end __mtInit");
 	}
 } // class mtDecoder
 
