@@ -206,7 +206,9 @@ public:
 	/// sort the file list by filename
 	void sort()
 	{
+		assert(0, "not implemented yet");
 	}
+
 	/// get the filename of entry number idx
 	string entryName(uint idx)
 	in

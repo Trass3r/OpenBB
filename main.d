@@ -6,13 +6,14 @@ module main;
 import dsfml.system.all;
 import dsfml.window.all;
 import dsfml.graphics.all;
-import dsfml.audio.all;
+import dsfml.audio.soundbuffer;
+import dsfml.audio.sound;
 //import dsfml.network.all;
 
 import openbb.common;
 import openbb.dynamicentity;
 import openbb.graphics.animation;
-import openbb.graphics.gui;
+//import openbb.graphics.gui;
 import openbb.io.palette;
 import openbb.io.boxfile;
 import openbb.io.fatfile;
@@ -20,7 +21,7 @@ import openbb.io.mfbfile;
 import openbb.map;
 //import openbb.lua;
 import std.perf;
-import openbb.quadtree;
+//import openbb.quadtree;
 import std.stdio;
 import std.string;
 
@@ -46,7 +47,7 @@ void main()
 	tileMarker.addPoint(77.f/2.f, 0, Color(255,0,0,100), Color.WHITE);
 	tileMarker.enableFill = true;
 	tileMarker.enableOutline = false;
-	tileMarker.outlineWidth = 2;
+	tileMarker.outlineThickness = 2;
 	tileMarker.setPosition(77, 60);
 	
 	// test ambient sounds

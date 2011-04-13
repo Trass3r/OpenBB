@@ -4,50 +4,9 @@
 module openbb.io.m10file;
 
 import std.stdio;
-import std.file;
 
-int main(string[] args)
+private
 {
-	if (args.length < 3)
-	{
-		writeln("Beasts and Bumpkins .m10 Decoder");
-		writeln("Usage: " ~ args[0] ~ " {input} {output}");
-		return 1;
-	}
-
-	string inputFilename;
-	string outputFilename;
-	inputFilename = args[1];
-	outputFilename = args[2];
-
-	auto input = cast(ubyte[]) read(inputFilename);
-
-
-	auto Output = new ubyte[4_000_000];
-	
-	PrepareWaveHeader(Output);
-
-	mtDecoder Decoder = new mtDecoder;
-	Decoder.Initialize(input);
-
-	short Samples[4096];
-	uint Decoded;
-	int SampleCount;
-	SampleCount = 0;
-	uint idx = 44; // size of WAV headers
-	do
-	{
-		Decoded = Decoder.Decode(Samples, 4096u);
-
-		Output[idx..idx+Decoded*2] = (cast(ubyte*) Samples)[0.. Decoded * 2];
-		idx += Decoded*2;
-		SampleCount += Decoded;
-	} while (Decoded == 4096);
-
-	WriteWaveHeader(Output, 22050, 16, 1, SampleCount);
-	std.file.write(outputFilename, Output[0..idx]);
-	return 0;
-}
 
 //Wave 'fmt ' chunk
 struct SWaveFmtChunk
@@ -96,7 +55,7 @@ void WriteWaveHeader(ubyte[] Output, uint SampleRate,
 	return;
 }
 
-static uint readBytes(ubyte[] input)
+static uint readBytes(const(ubyte)[] input)
 {
 	uint result;
 
@@ -107,11 +66,12 @@ static uint readBytes(ubyte[] input)
 	}
 	return result;
 }
+} // of private
 
-class mtDecoder
+class M10File
 {
 protected:
-	uint parsePTHeader(ubyte[] input)
+	uint parsePTHeader(const(ubyte)[] input)
 	{
 		// check magic
 		if (input[0..2] != "PT")
@@ -190,7 +150,7 @@ private:
 	uint	_TotalSampleCount;
 
 public:
-	void Initialize(ubyte[] input)
+	this(const(ubyte)[] input)
 	{
 //		Clear();
 
@@ -241,28 +201,54 @@ public:
 		return;
 	}
 	
+	//! returns content as wav
+	ubyte[] toWav()
+	{
+		auto Output = new ubyte[4_000_000];
+		
+		PrepareWaveHeader(Output);
+
+		short[4096] Samples;
+		uint Decoded;
+		int SampleCount;
+		SampleCount = 0;
+		uint idx = 44; // size of WAV headers
+		do
+		{
+			Decoded = Decode(Samples);
+
+			Output[idx..idx+Decoded*2] = (cast(ubyte*) Samples)[0.. Decoded * 2];
+			idx += Decoded*2;
+			SampleCount += Decoded;
+		} while (Decoded == 4096);
+
+		WriteWaveHeader(Output, 22050, 16, 1, SampleCount);
+		return Output[0 .. idx];
+	}
+	
 	union mtFloatInt
 	{
 		float Float;
 		uint Int;
 	}
-	size_t Decode(short[] OutputBuffer, uint SampleCount)
+	//! decodes a block, returns number of samples written
+	size_t Decode(short[] OutputBuffer)
 	{
 		if (!_TotalSampleCount)
 		{
 			return 0;
 		}
 
-		for (size_t i = 0; i < SampleCount; i++)
+		for (size_t i = 0; i < OutputBuffer.length; i++)
 		{
 			mtFloatInt Sample;
-			Sample.Int = 0x4B400000;
+			Sample.Int = 0x4B400000; // 12582912.0f
 
 			if (_SampleBufferOffset >= 432)
 			{
 				try
 				{
-					__mtDecodeBlock();
+					mtDecodeBlock();
 				}
 				catch (Exception e)
 				{
@@ -276,8 +262,8 @@ public:
 			_SampleBufferOffset++;
 			_SamplesDecodedSoFar++;
 
-			uint Clipped;
-			Clipped = Sample.Int & 0x1FFFF;
+			uint Clipped = Sample.Int & 0x1FFFF; // get 21 bits of the mantissa
+			
 			if (Clipped > 0x7FFF && Clipped < 0x18000)
 			{
 				if (Clipped >= 0x10000)
@@ -297,7 +283,7 @@ public:
 				return i + 1;
 			}
 		}
-		return SampleCount;
+		return OutputBuffer.length;
 	}
 
 private:
@@ -312,9 +298,8 @@ private:
 	float[324]	_bigTable;		// 174
 	float[432]	_sampleBuffer;	// 684
 
-	void __mtDecodeBlock()
+	void mtDecodeBlock()
 	{
-		writeln("__mtDecodeBlock()");
 		float[12] tableA = 0;
 		float[118] tableB = 0;
 
@@ -428,7 +413,6 @@ private:
 	//! 
 	static void function2(float* innerTable1, float* arg2)
 	{
-		writeln("function2()");
 		float[24] table;
 
 		for (ubyte i = 0; i < 11; i++)
@@ -470,7 +454,6 @@ private:
 	//! 
 	void function3(int flag, float* outArray, uint countInt)
 	{
-		writeln("function3()");
 		if (flag != 0)
 		{
 			uint Index = 0;
@@ -621,7 +604,7 @@ private:
 		}
 		return;
 	}
-} // class mtDecoder
+} // class M10File
 
 private __gshared immutable
 {
