@@ -5,12 +5,13 @@ module openbb.io.boxfile;
 
 import openbb.common;
 
-import std.stream, std.file;
+import core.stdc.string;
+
+import std.file;
 import std.string;
 import std.stdio;
-
-import dsfml.system.stringutil;
-
+import std.datetime.systime;
+import std.datetime.date;
 
 private struct SYSTEMTIME
 {
@@ -22,7 +23,7 @@ private struct SYSTEMTIME
     ushort minute;
     ushort second;
     ushort milliseconds;
-    string toString()
+    string toString() const
     {
     	return std.string.format("%2d.%2d.%4d %02d:%02d:%02d", day, month, year, hour, minute, second);
     }
@@ -32,7 +33,7 @@ private struct SYSTEMTIME
 private struct BoxHeader
 {
 align(1):
-	char magic[3]; // "BOX"
+	char[3] magic; // "BOX"
 	byte uk1;
 	uint uk2; // 65536
 }
@@ -44,15 +45,15 @@ private struct Entry
     char[256] path;
 	SYSTEMTIME timestamp;
 	uint size; // of actual data
-	
-	string toString()
+
+	string toString() const
 	{
 		return std.string.format("filename: %s\tpath: %s\ttimestamp: %s\tfilesize: %d", fromStringz(cast(ichar*)filename), fromStringz(cast(ichar*)path), timestamp, size);
 	}
 }
 
 /// Archive file format used by B&B
-class BOXFile
+final class BOXFile
 {
 private:
 	string		_filename;
@@ -77,11 +78,12 @@ public:
 	/// read in the archive contents
 	void readArchive()
 	{
-		auto _hIn = new std.stream.File();
 		try
 		{
-			_hIn.open(_filename, FileMode.In);
-			_hIn.readExact(&_header, BoxHeader.sizeof);
+			auto _hIn = new File(_filename, "rb");
+			scope(exit) _hIn.close();
+
+			_hIn.rawRead((&_header)[0..1]);
 
 			if (_header.magic != "BOX"c)
 				throw new Exception("No valid BOX file!");
@@ -95,7 +97,7 @@ public:
 			uint i; // for counting entry index
 			while(!_hIn.eof)
 			{
-				_hIn.readExact(&curEntry, Entry.sizeof);
+				_hIn.rawRead((&curEntry)[0..1]);
 				_entryHeaders ~= curEntry;
 
 				_filenameTable[fromStringz(cast(ichar*) curEntry.filename)] = i; // filename -> index hash table
@@ -103,7 +105,7 @@ public:
 				//debug writeln(curEntry);
 
 				ubyte[] buffer = new ubyte[curEntry.size];
-				_hIn.readExact(buffer.ptr, buffer.length);
+				_hIn.rawRead(buffer);
 				_entryData ~= buffer; // this actually isn't that inefficient cause only references are copied
 				
 				++i;
@@ -112,10 +114,6 @@ public:
 		catch (Exception e)
 		{
 			writeln(e);
-		}
-		finally
-		{
-			_hIn.close();
 		}
 	}
 	
@@ -131,7 +129,7 @@ public:
 	}
 	
 	/// get contents of a file by index
-	const(ubyte)[] opIndex(uint index)
+	const(ubyte)[] opIndex(size_t index)
 	in
 	{
 		assert(index < _entryData.length);
@@ -150,56 +148,28 @@ public:
 	/// extract all the files to the current directory
 	void extractAll()
 	{
-		ubyte[] buffer;
-		
-		auto _hIn = new std.stream.File();
-		try
+		if (exists(_filename[0..$-4])==0)
+			mkdir(_filename[0..$-4]);
+		chdir(_filename[0..$-4]);
+		writeln("extracting...");
+		foreach (size_t idx, ref Entry curEntry; _entryHeaders)
 		{
-			_hIn.open(_filename, FileMode.In);
-			_hIn.readExact(&_header, BoxHeader.sizeof);
-			debug writeln("reading Box header");
-			if (_header.magic != "BOX")
-				throw new Exception("No valid BOX file!");
-			if (_header.uk2 != 65536)
-				writeln("Warning: BOX might have an unexpected format!");
-			debug writefln("BOX byte: %d", _header.uk1);
-
-			Entry curEntry;
-			if(exists(_filename[0..$-4])==0)
-				mkdir(_filename[0..$-4]);
-			chdir(_filename[0..$-4]);
-			auto hOut = new std.stream.File;
-			debug writeln("entering while");
-			while(!_hIn.eof)
+			writeln(curEntry);
+			try
 			{
-				_hIn.readExact(&curEntry, Entry.sizeof);
-				try
+				auto hOut = new File(cast(string) curEntry.filename[0..strlen(curEntry.filename.ptr)], "wb");
 				{
-					debug writeln(curEntry);
-					hOut.open(cast(string) curEntry.filename[0..stringLength(curEntry.filename.ptr)], FileMode.Out);
-					if(buffer.length < curEntry.size)
-						buffer.length = curEntry.size;
-					_hIn.readExact(buffer.ptr, curEntry.size);
-					hOut.writeExact(buffer.ptr, curEntry.size);
+				scope(exit) hOut.close();
+				hOut.rawWrite(this[idx]);
 				}
-				catch(Exception e)
-				{
-					writeln(e);
-				}
-				finally
-				{
-					hOut.close();
-				}
-				// TODO: set date attribute if possible
+				SysTime modificationTime = SysTime(DateTime(curEntry.timestamp.year, curEntry.timestamp.month, curEntry.timestamp.day,
+					curEntry.timestamp.hour, curEntry.timestamp.minute, curEntry.timestamp.second));
+				setTimes(hOut.name, modificationTime, modificationTime);
 			}
-		}
-		catch (Exception e)
-		{
-			writeln(e);
-		}
-		finally
-		{
-			_hIn.close();
+			catch(Exception e)
+			{
+				writeln(e);
+			}
 		}
 	}
 	
@@ -219,11 +189,11 @@ public:
 	{
 		return fromStringz(cast(ichar*) _entryHeaders[idx].filename);
 	}
-	
+
 	/// dump archive directory information
 	void dump(string filename)
 	{
-		auto hIn = new std.stream.File(filename, FileMode.Out);
+		auto hIn = new File(filename, "wb");
 		scope(exit) hIn.close();
 		
 		for(uint i=0; i<_entryHeaders.length; i++)
@@ -235,7 +205,7 @@ public:
 	@property
 	{
 		/// number of files in the archive
-		uint numFiles()
+		size_t numFiles()
 		{
 			return _entryHeaders.length;
 		}
