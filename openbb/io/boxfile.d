@@ -92,22 +92,26 @@ public:
 			debug writefln("BOX byte: %d", _header.uk1);
 
 			Entry curEntry;
-			
+
 			// do until end of file is reached
+			// file.eof() is useless as it only returns true after the next read after EOF
 			uint i; // for counting entry index
-			while(!_hIn.eof)
+			while (true)
 			{
-				_hIn.rawRead((&curEntry)[0..1]);
+				writeln(_hIn.tell);
+				auto actuallyRead = _hIn.rawRead((&curEntry)[0..1]);
+				if (actuallyRead.empty)
+					break;
 				_entryHeaders ~= curEntry;
 
 				_filenameTable[fromStringz(cast(ichar*) curEntry.filename)] = i; // filename -> index hash table
-				
+
 				//debug writeln(curEntry);
 
 				ubyte[] buffer = new ubyte[curEntry.size];
 				_hIn.rawRead(buffer);
 				_entryData ~= buffer; // this actually isn't that inefficient cause only references are copied
-				
+
 				++i;
 			}
 		}
