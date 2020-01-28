@@ -8,43 +8,46 @@ import std.stdio;
 import openbb.common;
 import openbb.io.palette;
 
-const FLAG_COMPRESSED = 0x2;
-const FLAG_1 = 0x1;
-const FLAG_4 = 0x4;
-
 ///
-class MFBFile
+final class MFBFile
 {
 private:
+	enum EntryFlags : ushort
+	{
+		Transparent = 1,
+		Compressed = 2,
+		Unknown = 4
+	}
+
 	struct Header
 	{
 		align(1):
 		char[3] magic; // MFB
 		char[3] ver; // version, should be 101d (= 65h)
-		ushort width; // is the width of a single image
-		ushort height; // is the height of a single image
-		ushort uk3; // not used?
-		ushort uk4; // not used?
-		ushort flags; // some kind of flag byte
+		ushort width;  // width of a single image
+		ushort height; // height of a single image
+		ushort offsetx; // not used?
+		ushort offsety; // not used?
+		EntryFlags flags; // some kind of flag byte
 		ushort numSprites;
 		
-		string toString()
+		string toString() const
 		{
-			return std.string.format("{%s,%s,%d,%d,%d,%d,%b,%d}", magic, ver, width, height, uk3, uk4, flags, numSprites);
+			return std.string.format("{%s,%s,%d,%d,%d,%d,%b,%d}", magic, ver, width, height, offsetx, offsety, flags, numSprites);
 		}
 	}
 	Header _header;
 	string _filename;
 	ubyte[][] _spriteData;
-	ubyte _transparencyColor; // the color used for transparency TODO: do this better
+	ubyte _transparencyColor; // the color used for transparency
 
 	uint _spriteSheetWidth; // used temporarily for opSlice
 	uint _spriteSheetHeight;
 	
 	void checkHeader()
 	{
-//		if(_header.magic!="MFB")
-//			MessageBoxA(NULL, toStringz("magic doesn't match!"), toStringz("magic error"),MB_OK);
+		if (_header.magic != "MFB")
+			throw new Exception("Invalid MFB header");
 	}
 
 public:
@@ -53,9 +56,8 @@ public:
 	{
 		_filename = filename;
 		
-		ubyte[] data = cast(ubyte[]) read(filename);
+		scope data = cast(ubyte[]) std.file.read(filename);
 		this(data, isMaptile);
-		delete data;
 	}
 	
 	/**
@@ -70,26 +72,22 @@ public:
 
 		uint pos = Header.sizeof;
 		
-		if (isMaptile)
-			_header.height -= 5; // first 5 rows in maptile images are empty
+		//if (isMaptile)
+		//	_header.height -= 5; // first 5 rows in maptile images are empty
 		
 		uint spriteSize = _header.width * _header.height;
 		
 		_spriteData = new ubyte[][](_header.numSprites, spriteSize);
 		for(uint i=0; i<_header.numSprites; i++)
 		{
-			if((_header.flags & FLAG_COMPRESSED) == 0) // not compressed
+			if((_header.flags & EntryFlags.Compressed) == 0) // not compressed
 			{
 				_transparencyColor = data[pos];
 				
 				// if it's maptile.mfb, skip the first 5 rows since they are empty
-				if (isMaptile)
-					pos += 5*_header.width;
-				
-				foreach(j; 0 .. spriteSize)
-					_spriteData[i][j] = data[pos + j];
-				// _spriteData[i] = data[pos .. pos + _header.width*_header.height].dup;
-				
+				//if (isMaptile)
+				//	pos += 5*_header.width;
+				_spriteData[i][] = data[pos .. pos + spriteSize];
 				pos += spriteSize;
 			}
 			else // RLE compressed
@@ -102,27 +100,24 @@ public:
 		} // for numSprites
 	}
 
-	~this()
-	{
-		delete _spriteData;
-	}
-	
 	/// returns sprite at index i as RGBA data
 	// TODO: call opSlice(index, index+1) here?
-	RGBA[] opIndex(size_t index, ubyte paletteIdx = 0)
+	RGBA[] opIndex(size_t index, Palette paletteIdx = Palette.Main)
 	in
 	{
-		assert(index>=0 && index<_header.numSprites);
+		assert(index < _header.numSprites);
 	}
 	body
 	{
 		usePalette(paletteIdx);
 		RGBA[] buffer;
 		buffer.length = _header.width*_header.height;
-		for(uint i=0; i<buffer.length; i++)
+		for (uint i = 0; i < buffer.length; ++i)
 		{
-//			buffer[i] = palette[_spriteData[index][i]];
-			buffer[i] = _spriteData[index][i] == _transparencyColor ? RGBA(0,0,0,0) : palette[_spriteData[index][i]];
+			if ((_header.flags & EntryFlags.Transparent) && _spriteData[index][i] == _transparencyColor)
+				buffer[i] = RGBA(0,0,0,0);
+			else
+				buffer[i] = palette[_spriteData[index][i]];
 		}
 		return buffer;
 	}
@@ -130,18 +125,23 @@ public:
 	/// return all sprites in a single image
 	RGBA[] opSlice()
 	{
+		// FIXME: respect the range
+		/*
 		return opSlice(0, _header.numSprites);
 	}
 	
 	/// return sprites s .. e in a single image with height rows and width columns
 	RGBA[] opSlice(size_t s, size_t e)
-	{
+	{*/
 		uint width	= cast(uint) (sqrtf(cast(float) _header.numSprites) + 0.5); // round(sqrt(x))
 		uint height	= cast(uint) ceilf((cast(float) _header.numSprites) / width); // round up
-//		uint height = 1;
-//		uint width = _header.numSprites;
+		//height = 1;
+		//width = _header.numSprites;
 
-		usePalette(0);
+		// FIXME: return this in a proper way
+		_spriteSheetWidth = width;
+		_spriteSheetHeight = height;
+
 		auto buffer = new RGBA[_header.width*_header.height * width*height]; // need the full image even if numSprites < width*height 
 
 		uint bufIndex = 0;
@@ -153,17 +153,22 @@ public:
 				{
 					for(uint x=0; x<_header.width; x++)
 					{
-						if (j*width+i < _header.numSprites)
-							buffer[bufIndex++] = _spriteData[j*width+i][y*_header.width+x] == _transparencyColor ? RGBA(0,0,0,0) : palette[_spriteData[j*width+i][y*_header.width+x]];
+						const spriteIdx = j*width+i;
+						if (spriteIdx >= _header.numSprites)
+						{
+							buffer[bufIndex++] = RGBA(255, 0, 255, 255); // use something salient to detect when this sprite is accidentally used
+							continue;
+						}
+
+						const pixelIdx = y * _header.width + x;
+						if ((_header.flags & EntryFlags.Transparent) && _spriteData[spriteIdx][pixelIdx] == _transparencyColor)
+							buffer[bufIndex++] = RGBA(0,0,0,0);
 						else
-							buffer[bufIndex++] = Color.MAGENTA; // use something salient to detect when this sprite is accidentally used
+							buffer[bufIndex++] = palette[_spriteData[spriteIdx][pixelIdx]];
 					}
 				}
-					
 			}
 		}
-		_spriteSheetWidth = width;
-		_spriteSheetHeight = height;
 		return buffer;
 	}
 	

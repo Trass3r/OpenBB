@@ -1,52 +1,63 @@
 module openbb.io.palette;
 
-import std.stream;
 import std.stdio;
 
 import openbb.common;
 
 RGBA[] palette;
 
-void usePalette(ubyte idx)
+enum Palette
+{
+	Main,
+	Spring,
+	Mission,
+	Loading,
+	Title,
+	Summer,
+	Autumn,
+	Winter
+}
+
+void usePalette(Palette idx)
 {
 	switch(idx)
 	{
-		case 0:
+		case Palette.Main:
 			palette = PALETTE;
 			break;
-		case 1:
+		case Palette.Spring:
 			palette = SPRING_PALETTE;
 			break;
-		case 2:
+		case Palette.Mission:
 			palette = MISSIONPALETTE;
 			break;
-		case 3:
+		case Palette.Loading:
 			palette = LOADINGPALETTE;
 			break;
-		case 4:
+		case Palette.Title:
 			palette = TITLEPALETTE;
 			break;
-		case 5:
+		case Palette.Summer:
 			palette = SUMMER_PALETTE;
 			break;
-		case 6:
+		case Palette.Autumn:
 			palette = AUTUMN_PALETTE;
 			break;
-		case 7:
+		case Palette.Winter:
 			palette = WINTER_PALETTE;
 			break;
 		default:
 			throw new Exception("Invalid palette index");
 	}
 }
-
+/*
 void loadPalette()
 {
-	auto hFile = new std.stream.File;
+	auto hFile = new File;
 	try
 	{
-		hFile.open("mix.dat", FileMode.In);
-		hFile.readExact(palette.ptr, 65536);
+		hFile.open("mix.dat", "rb");
+		hFile.rawRead(palette.ptr, 65536);
 	}
 	catch(Exception e)
 	{
@@ -57,7 +68,7 @@ void loadPalette()
 		hFile.close();
 	}
 }
-
+*/
 private:
 
 RGBA[] PALETTE, SPRING_PALETTE, SUMMER_PALETTE, AUTUMN_PALETTE, WINTER_PALETTE, MISSIONPALETTE, LOADINGPALETTE, TITLEPALETTE;

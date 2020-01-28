@@ -3,6 +3,14 @@ module openbb.common;
 public import openbb.log;
 public import openbb.exceptions;
 
+struct RGBA
+{
+	ubyte r;
+	ubyte g;
+	ubyte b;
+	ubyte a;
+}
+
 import std.string;
 
 // type aliases for D2
