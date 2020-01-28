@@ -210,8 +210,7 @@ public:
 
 		short[4096] Samples;
 		uint Decoded;
-		int SampleCount;
-		SampleCount = 0;
+		uint SampleCount = 0;
 		uint idx = 44; // size of WAV headers
 		do
 		{
@@ -232,14 +231,14 @@ public:
 		uint Int;
 	}
 	//! decodes a block, returns number of samples written
-	size_t Decode(short[] OutputBuffer)
+	uint Decode(short[] OutputBuffer)
 	{
 		if (!_TotalSampleCount)
 		{
 			return 0;
 		}
 
-		for (size_t i = 0; i < OutputBuffer.length; i++)
+		for (uint i = 0; i < OutputBuffer.length; ++i)
 		{
 			mtFloatInt Sample;
 			Sample.Int = 0x4B400000; // 12582912.0f
@@ -283,7 +282,7 @@ public:
 				return i + 1;
 			}
 		}
-		return OutputBuffer.length;
+		return cast(uint)OutputBuffer.length;
 	}
 
 private:
@@ -462,7 +461,7 @@ private:
 			do
 			{
 				ubyte LookedUpValue;
-				uint Bits = _currentBits & 0xFF;;
+				uint Bits = _currentBits & 0xFF;
 
 				LookedUpValue = byte_4D3B68[(HighBits << 8) + Bits];
 				HighBits = LookupTable[LookedUpValue].HighBits;

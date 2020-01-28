@@ -194,6 +194,11 @@ public:
 		return fromStringz(cast(ichar*) _entryHeaders[idx].filename);
 	}
 
+	auto entryDate(uint idx) const
+	{
+		return _entryHeaders[idx].timestamp;
+	}
+
 	/// dump archive directory information
 	void dump(string filename)
 	{
